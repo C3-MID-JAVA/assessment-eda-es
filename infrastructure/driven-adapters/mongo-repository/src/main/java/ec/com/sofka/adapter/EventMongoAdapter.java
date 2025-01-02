@@ -1,5 +1,7 @@
-package ec.com.sofka;
+package ec.com.sofka.adapter;
 
+import ec.com.sofka.IJSONMapper;
+import ec.com.sofka.JSONMap;
 import ec.com.sofka.data.EventEntity;
 import ec.com.sofka.database.events.IEventMongoRepository;
 import ec.com.sofka.gateway.IEventStore;

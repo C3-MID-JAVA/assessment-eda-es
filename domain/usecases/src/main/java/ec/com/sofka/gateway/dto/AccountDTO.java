@@ -8,29 +8,37 @@ import java.math.BigDecimal;
 public class AccountDTO {
     private String id;
     private String accountNumber;
-    private String owner;
     private BigDecimal balance;
+    private String userId;
 
+    public AccountDTO(String id) {
+        this.id = id;
+    }
 
-    public AccountDTO(BigDecimal balance, String owner, String accountNumber) {
+    public AccountDTO(String id, BigDecimal balance, String userId, String accountNumber) {
+        this.id = id;
         this.balance = balance;
-        this.owner = owner;
         this.accountNumber = accountNumber;
+        this.userId = userId;
+    }
+
+    public AccountDTO(BigDecimal balance, String userId, String accountNumber) {
+        this.balance = balance;
+        this.accountNumber = accountNumber;
+        this.userId = userId;
     }
 
     public String getId() {
         return id;
     }
 
-
-
     public String getAccountNumber() {
         return accountNumber;
     }
 
 
-    public String getOwner() {
-        return owner;
+    public String getUserId() {
+        return userId;
     }
 
 

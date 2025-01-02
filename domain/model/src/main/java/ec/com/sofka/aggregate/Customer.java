@@ -38,9 +38,9 @@ public class Customer extends AggregateRoot<CustomerId> {
 
 
     //Remember that User as Aggregate is the open door to interact with the entities
-    public void createAccount(BigDecimal accountBalance, String accountNumber, String name ) {
+    public void createAccount(BigDecimal accountBalance, String accountNumber, String userId ) {
         //Add the event to the aggregate
-        addEvent(new AccountCreated(accountNumber,accountBalance, name)).apply();
+        addEvent(new AccountCreated(accountNumber,accountBalance, userId)).apply();
 
     }
 

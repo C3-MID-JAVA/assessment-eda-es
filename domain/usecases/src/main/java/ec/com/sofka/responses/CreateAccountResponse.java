@@ -1,15 +1,19 @@
 package ec.com.sofka.responses;
 
+import java.math.BigDecimal;
+
 //Response class associated to the CreateAccountUseCase
 public class CreateAccountResponse{
     private final String customerId;
     private final String accountNumber;
-    private final String name;
+    private final BigDecimal balance;
+    private final String userId;
 
-    public CreateAccountResponse(String customerId, String accountNumber, String name) {
+    public CreateAccountResponse(String customerId, String accountNumber, BigDecimal balance, String userId) {
         this.customerId = customerId;
         this.accountNumber = accountNumber;
-        this.name = name;
+        this.balance = balance;
+        this.userId = userId;
     }
 
     public String getCustomerId() {
@@ -20,7 +24,11 @@ public class CreateAccountResponse{
         return accountNumber;
     }
 
-    public String getName() {
-        return name;
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }

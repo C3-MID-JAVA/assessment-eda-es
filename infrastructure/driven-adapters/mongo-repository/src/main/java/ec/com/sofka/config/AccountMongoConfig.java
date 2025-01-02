@@ -17,7 +17,7 @@ public class AccountMongoConfig {
     @Primary
     @Bean(name = "accountsDatabaseFactory")
     public MongoDatabaseFactory accountsDatabaseFactory(
-            @Value("${spring.data.mongodb.accounts-uri}") String uri) {
+            @Value("${spring.data.mongodb.bank-uri}") String uri) {
         return new SimpleMongoClientDatabaseFactory(uri);
     }
 

@@ -7,13 +7,13 @@ import java.math.BigDecimal;
 public class AccountCreated extends DomainEvent {
     private final String accountNumber;
     private final BigDecimal accountBalance;
-    private final String name;
+    private final String userId;
 
-    public AccountCreated(String accountNumber, BigDecimal accountBalance, String name) {
+    public AccountCreated(String accountNumber, BigDecimal accountBalance, String userId) {
         super(EventsEnum.ACCOUNT_CREATED.name());
         this.accountNumber = accountNumber;
         this.accountBalance = accountBalance;
-        this.name = name;
+        this.userId = userId;
     }
 
     public String getAccountNumber() {
@@ -24,9 +24,7 @@ public class AccountCreated extends DomainEvent {
         return accountBalance;
     }
 
-    public String getName() {
-        return name;
+    public String getUserId() {
+        return userId;
     }
-
-
 }
