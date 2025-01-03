@@ -18,16 +18,16 @@ public class AccountNumber implements IValueObject<String> {
         return value;
     }
 
-    private String validate(final String value){
-        if(value == null){
+    private String validate(final String value) {
+        if (value == null) {
             throw new IllegalArgumentException("The number can't be null");
         }
 
-        if(value.isBlank()){
+        if (value.isBlank()) {
             throw new IllegalArgumentException("The number can't be empty");
         }
 
-        if(value.length() < 8){
+        if (value.length() < 8) {
             throw new IllegalArgumentException("The number must be at least 8 characters long");
         }
 

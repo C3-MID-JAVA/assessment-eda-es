@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.SimpleReactiveMongoDatabaseFactory;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 @Configuration
-@EnableReactiveMongoRepositories(basePackages = "ec.com.sofka.database.account",
+@EnableReactiveMongoRepositories(basePackages = "ec.com.sofka.database.bank",
         reactiveMongoTemplateRef = "bankMongoTemplate"
 )
 public class BankMongoConfig {

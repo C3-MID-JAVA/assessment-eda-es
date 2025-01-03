@@ -131,7 +131,7 @@ public class AccountRouter {
         return RouterFunctions
                 .route(RequestPredicates.GET("/accounts/{id}"), accountHandler::getByAccountNumber)
                 .andRoute(RequestPredicates.POST("/accounts").and(accept(MediaType.APPLICATION_JSON)), accountHandler::create)
-                /*.andRoute(RequestPredicates.GET("/accounts/{userId}/user"), accountHandler::getAllByUserId)*/;
+                .andRoute(RequestPredicates.GET("/accounts/{userId}/user"), accountHandler::getAllByUserId);
     }
 
 }

@@ -40,7 +40,7 @@ public class JSONMap implements IJSONMapper {
             Instant when = Instant.ofEpochMilli((long) (node.get("when").asDouble() * 1000));
             String eventId = node.get("eventId").asText();
             String eventType = node.get("eventType").asText();
-            String aggregateRootId = node.get("aggregateRootId").asText();
+            String aggregateRootId = node.has("aggregateRootId") ? node.get("aggregateRootId").asText() : null;
             String aggregateRootName = node.get("aggregateRootName").asText();
             Long version = node.has("version") ? node.get("version").asLong() : 1L;
 

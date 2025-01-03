@@ -43,6 +43,5 @@ public class GetAccountByNumberUseCase implements IUseCase<GetAccountByNumberReq
                                             accountDTO.getUserId()
                                     )));
                         }));
-
     }
 }

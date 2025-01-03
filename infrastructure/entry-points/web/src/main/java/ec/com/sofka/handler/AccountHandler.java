@@ -2,7 +2,9 @@ package ec.com.sofka.handler;
 
 import ec.com.sofka.account.CreateAccountUseCase;
 import ec.com.sofka.account.GetAccountByNumberUseCase;
+import ec.com.sofka.account.GetAllByUserIdUseCase;
 import ec.com.sofka.account.request.GetAccountByNumberRequest;
+import ec.com.sofka.account.request.GetAllByUserIdRequest;
 import ec.com.sofka.dto.AccountRequestDTO;
 import ec.com.sofka.mapper.AccountMapper;
 import ec.com.sofka.validator.RequestValidator;
@@ -19,27 +21,16 @@ public class AccountHandler {
     private final RequestValidator requestValidator;
     private final GetAccountByNumberUseCase getAccountByNumberUseCase;
     private final CreateAccountUseCase createAccountUseCase;
-    /*private final GetAllByUserIdUseCase getAllByUserIdUseCase;*/
+    private final GetAllByUserIdUseCase getAllByUserIdUseCase;
 
-    public AccountHandler(RequestValidator requestValidator, GetAccountByNumberUseCase getAccountByNumberUseCase, CreateAccountUseCase createAccountUseCase) {
+    public AccountHandler(RequestValidator requestValidator, GetAccountByNumberUseCase getAccountByNumberUseCase, CreateAccountUseCase createAccountUseCase, GetAllByUserIdUseCase getAllByUserIdUseCase) {
         this.requestValidator = requestValidator;
         this.getAccountByNumberUseCase = getAccountByNumberUseCase;
         this.createAccountUseCase = createAccountUseCase;
+        this.getAllByUserIdUseCase = getAllByUserIdUseCase;
     }
 
-    /* public AccountHandler(
-                RequestValidator requestValidator,
-                GetAccountByNumberUseCase getAccountByNumberUseCase,
-                CreateAccountUseCase createAccountUseCase,
-                GetAllByUserIdUseCase getAllByUserIdUseCase
-        ) {
-            this.requestValidator = requestValidator;
-            this.getAccountByNumberUseCase = getAccountByNumberUseCase;
-            this.createAccountUseCase = createAccountUseCase;
-            this.getAllByUserIdUseCase = getAllByUserIdUseCase;
-        }
-    */
-    public Mono<ServerResponse> getByAccountNumber(ServerRequest request){
+    public Mono<ServerResponse> getByAccountNumber(ServerRequest request) {
         String accountNumber = request.pathVariable("id");
 
         return getAccountByNumberUseCase.execute(new GetAccountByNumberRequest(accountNumber))
@@ -63,10 +54,10 @@ public class AccountHandler {
                         .bodyValue(accountResponseDTO));
     }
 
-   /* public Mono<ServerResponse> getAllByUserId(ServerRequest request){
+    public Mono<ServerResponse> getAllByUserId(ServerRequest request) {
         String userId = request.pathVariable("userId");
 
-        return getAllByUserIdUseCase.apply(userId)
+        return getAllByUserIdUseCase.execute(new GetAllByUserIdRequest(userId))
                 .map(AccountMapper::fromEntity)
                 .collectList()
                 .flatMap(accountResponseDTOs ->
@@ -74,5 +65,5 @@ public class AccountHandler {
                                 .ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(accountResponseDTOs));
-    }*/
+    }
 }

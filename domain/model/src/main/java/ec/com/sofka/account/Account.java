@@ -3,8 +3,9 @@ package ec.com.sofka.account;
 import ec.com.sofka.account.values.AccountId;
 import ec.com.sofka.account.values.objects.Balance;
 import ec.com.sofka.account.values.objects.AccountNumber;
-import ec.com.sofka.account.values.objects.UserId;
+
 import ec.com.sofka.generics.utils.Entity;
+import ec.com.sofka.user.values.UserId;
 
 public class Account extends Entity<AccountId> {
     private final Balance balance;
