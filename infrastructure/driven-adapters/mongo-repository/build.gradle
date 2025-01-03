@@ -4,5 +4,4 @@ dependencies {
     implementation project (':serializer')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }

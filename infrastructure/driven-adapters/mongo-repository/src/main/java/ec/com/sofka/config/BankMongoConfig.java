@@ -13,21 +13,24 @@ import org.springframework.data.mongodb.core.SimpleReactiveMongoDatabaseFactory;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 @Configuration
-@EnableReactiveMongoRepositories(basePackages = "ec.com.sofka.database.events",
-                  reactiveMongoTemplateRef= "eventMongoTemplate")
-public class EventMongoConfig {
+@EnableReactiveMongoRepositories(basePackages = "ec.com.sofka.database.account",
+        reactiveMongoTemplateRef = "bankMongoTemplate"
+)
+public class BankMongoConfig {
 
-    @Value("${spring.data.mongodb.events-uri}")
-    private String eventMongoUri;
+    @Value("${spring.data.mongodb.bank-uri}")
+    private String bankMongoUri;
 
-    @Bean(name = "eventsDatabaseFactory")
-    public ReactiveMongoDatabaseFactory eventsDatabaseFactory() {
-        MongoClient mongoClient = MongoClients.create(eventMongoUri);
-        return new SimpleReactiveMongoDatabaseFactory(mongoClient, "logs");
+    @Primary
+    @Bean(name = "bankDatabaseFactory")
+    public ReactiveMongoDatabaseFactory bankDatabaseFactory() {
+        MongoClient mongoClient = MongoClients.create(bankMongoUri);
+        return new SimpleReactiveMongoDatabaseFactory(mongoClient, "bank");
     }
 
-    @Bean(name = "eventMongoTemplate")
-    public ReactiveMongoTemplate eventsMongoTemplate(@Qualifier("eventsDatabaseFactory") ReactiveMongoDatabaseFactory eventsDatabaseFactory) {
-        return new ReactiveMongoTemplate(eventsDatabaseFactory);
+    @Primary
+    @Bean(name = "bankMongoTemplate")
+    public ReactiveMongoTemplate bankMongoTemplate(@Qualifier("bankDatabaseFactory") ReactiveMongoDatabaseFactory bankDatabaseFactory) {
+        return new ReactiveMongoTemplate(bankDatabaseFactory);
     }
 }

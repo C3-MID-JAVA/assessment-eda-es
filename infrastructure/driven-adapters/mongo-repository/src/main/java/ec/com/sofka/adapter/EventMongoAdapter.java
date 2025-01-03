@@ -8,7 +8,10 @@ import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.generics.domain.DomainEvent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -17,16 +20,16 @@ public class EventMongoAdapter implements IEventStore {
 
     private final IEventMongoRepository repository;
     private final IJSONMapper mapper;
-    private final MongoTemplate eventMongoTemplate;
+    private final ReactiveMongoTemplate eventMongoTemplate;
 
-    public EventMongoAdapter(IEventMongoRepository repository, JSONMap mapper, @Qualifier("eventMongoTemplate")MongoTemplate eventMongoTemplate) {
+    public EventMongoAdapter(IEventMongoRepository repository, JSONMap mapper, @Qualifier("eventMongoTemplate") ReactiveMongoTemplate eventMongoTemplate) {
         this.repository = repository;
         this.mapper = mapper;
         this.eventMongoTemplate = eventMongoTemplate;
     }
 
     @Override
-    public DomainEvent save(DomainEvent event) {
+    public Mono<DomainEvent> save(DomainEvent event) {
         EventEntity e = new EventEntity(
                 event.getEventId(),
                 event.getAggregateRootId(),
@@ -34,17 +37,14 @@ public class EventMongoAdapter implements IEventStore {
                 mapper.writeToJson(event),
                 event.getWhen().toString(),
                 event.getVersion()
-
         );
-        repository.save(e);
-        return event;
+        return repository.save(e)
+                .thenReturn(event);
     }
 
     @Override
-    public List<DomainEvent> findAggregate(String aggregateId) {
-        List<EventEntity> entities = repository.findByAggregateId(aggregateId);
-        return entities.stream()
-                .map(eventEntity -> mapper.readFromJson(eventEntity.getEventData(), DomainEvent.class))
-                .toList();
+    public Flux<DomainEvent> findAggregate(String aggregateId) {
+        return repository.findByAggregateId(aggregateId)
+                .map(eventEntity -> mapper.readFromJson(eventEntity.getEventData(), DomainEvent.class));
     }
 }

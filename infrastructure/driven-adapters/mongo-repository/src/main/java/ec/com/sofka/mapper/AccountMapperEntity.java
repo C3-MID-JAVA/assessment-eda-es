@@ -8,16 +8,18 @@ public class AccountMapperEntity {
         return new AccountEntity(
                 accountDTO.getAccountNumber(),
                 accountDTO.getBalance(),
-                accountDTO.getUserId()
+                accountDTO.getUserId(),
+                accountDTO.getCustomerId()
         );
     }
 
     public static AccountDTO toDTO(AccountEntity accountEntity) {
         return new AccountDTO(
                 accountEntity.getId(),
-                accountEntity.getBalance(),
                 accountEntity.getAccountNumber(),
-                accountEntity.getUserId()
+                accountEntity.getBalance(),
+                accountEntity.getUserId(),
+                accountEntity.getCustomerId()
         );
     }
 }

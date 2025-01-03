@@ -2,9 +2,12 @@ package ec.com.sofka.aggregate;
 
 import ec.com.sofka.account.Account;
 import ec.com.sofka.aggregate.events.AccountCreated;
+import ec.com.sofka.aggregate.events.AccountRetrieved;
 import ec.com.sofka.aggregate.values.CustomerId;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,18 +41,20 @@ public class Customer extends AggregateRoot<CustomerId> {
 
 
     //Remember that User as Aggregate is the open door to interact with the entities
-    public void createAccount(BigDecimal accountBalance, String accountNumber, String userId ) {
+    public void createAccount(BigDecimal balance, String accountNumber, String userId) {
         //Add the event to the aggregate
-        addEvent(new AccountCreated(accountNumber,accountBalance, userId)).apply();
+        addEvent(new AccountCreated(accountNumber, balance, userId)).apply();
+    }
 
+    public void retrieveAccount(BigDecimal balance, String accountNumber, String userId) {
+        addEvent(new AccountRetrieved(accountNumber, balance, userId)).apply();
     }
 
     //To rebuild the aggregate
-    public static Customer from(final String id, List<DomainEvent> events) {
+    public static Mono<Customer> from(final String id, Flux<DomainEvent> events) {
         Customer customer = new Customer(id);
-        events.forEach((event) -> customer.addEvent(event).apply());
-        return customer;
+        return events
+                .flatMap(event -> Mono.fromRunnable(() -> customer.addEvent(event).apply()))
+                .then(Mono.just(customer));
     }
-
-
 }

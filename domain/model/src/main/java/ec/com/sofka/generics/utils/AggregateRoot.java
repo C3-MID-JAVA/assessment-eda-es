@@ -38,6 +38,4 @@ public abstract class AggregateRoot<I extends Identity> extends Entity<I> {
 
         return actionsHandler.append(event);
     }
-
-
 }

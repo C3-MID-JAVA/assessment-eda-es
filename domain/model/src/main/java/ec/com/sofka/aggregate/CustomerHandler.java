@@ -14,6 +14,7 @@ public class CustomerHandler extends DomainActionsContainer {
     public CustomerHandler(Customer customer) {
         //8. Add the actions to the handler
         addDomainActions((AccountCreated event) -> {
+            System.out.println("Procesando evento AccountCreated: " + event);
             Account account = new Account(new AccountId(),
                     Balance.of(event.getAccountBalance()),
                     AccountNumber.of(event.getAccountNumber()),

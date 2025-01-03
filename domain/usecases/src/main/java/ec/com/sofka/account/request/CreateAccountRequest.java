@@ -1,8 +1,7 @@
-package ec.com.sofka.request;
+package ec.com.sofka.account.request;
 
 import ec.com.sofka.generics.utils.Request;
 
-//Usage of the Request class
 public class CreateAccountRequest extends Request
 {
     private final String userId;
@@ -15,5 +14,4 @@ public class CreateAccountRequest extends Request
     public String getUserId() {
         return userId;
     }
-
 }

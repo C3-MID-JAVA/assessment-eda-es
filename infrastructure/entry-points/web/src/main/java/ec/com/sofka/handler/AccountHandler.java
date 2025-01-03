@@ -1,6 +1,8 @@
 package ec.com.sofka.handler;
 
-import ec.com.sofka.CreateAccountUseCase;
+import ec.com.sofka.account.CreateAccountUseCase;
+import ec.com.sofka.account.GetAccountByNumberUseCase;
+import ec.com.sofka.account.request.GetAccountByNumberRequest;
 import ec.com.sofka.dto.AccountRequestDTO;
 import ec.com.sofka.mapper.AccountMapper;
 import ec.com.sofka.validator.RequestValidator;
@@ -15,40 +17,39 @@ import reactor.core.publisher.Mono;
 public class AccountHandler {
 
     private final RequestValidator requestValidator;
-    /*
-        private final GetAccountByNumberUseCase getAccountByNumberUseCase;
-    */
+    private final GetAccountByNumberUseCase getAccountByNumberUseCase;
     private final CreateAccountUseCase createAccountUseCase;
     /*private final GetAllByUserIdUseCase getAllByUserIdUseCase;*/
 
-    public AccountHandler(RequestValidator requestValidator, CreateAccountUseCase createAccountUseCase) {
+    public AccountHandler(RequestValidator requestValidator, GetAccountByNumberUseCase getAccountByNumberUseCase, CreateAccountUseCase createAccountUseCase) {
         this.requestValidator = requestValidator;
+        this.getAccountByNumberUseCase = getAccountByNumberUseCase;
         this.createAccountUseCase = createAccountUseCase;
     }
 
     /* public AccountHandler(
-            RequestValidator requestValidator,
-            GetAccountByNumberUseCase getAccountByNumberUseCase,
-            CreateAccountUseCase createAccountUseCase,
-            GetAllByUserIdUseCase getAllByUserIdUseCase
-    ) {
-        this.requestValidator = requestValidator;
-        this.getAccountByNumberUseCase = getAccountByNumberUseCase;
-        this.createAccountUseCase = createAccountUseCase;
-        this.getAllByUserIdUseCase = getAllByUserIdUseCase;
-    }
-*/
-    /*public Mono<ServerResponse> getByAccountNumber(ServerRequest request){
+                RequestValidator requestValidator,
+                GetAccountByNumberUseCase getAccountByNumberUseCase,
+                CreateAccountUseCase createAccountUseCase,
+                GetAllByUserIdUseCase getAllByUserIdUseCase
+        ) {
+            this.requestValidator = requestValidator;
+            this.getAccountByNumberUseCase = getAccountByNumberUseCase;
+            this.createAccountUseCase = createAccountUseCase;
+            this.getAllByUserIdUseCase = getAllByUserIdUseCase;
+        }
+    */
+    public Mono<ServerResponse> getByAccountNumber(ServerRequest request){
         String accountNumber = request.pathVariable("id");
 
-        return getAccountByNumberUseCase.apply(accountNumber)
+        return getAccountByNumberUseCase.execute(new GetAccountByNumberRequest(accountNumber))
                 .map(AccountMapper::fromEntity)
                 .flatMap(accountResponseDTO ->
                         ServerResponse
                                 .ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(accountResponseDTO));
-    }*/
+    }
 
     public Mono<ServerResponse> create(ServerRequest request) {
         return request.bodyToMono(AccountRequestDTO.class)

@@ -4,6 +4,6 @@ import ec.com.sofka.gateway.dto.AccountDTO;
 import reactor.core.publisher.Mono;
 
 public interface AccountRepository {
-    Mono<AccountDTO> findByAcccountNumber(String accountNumber);
+    Mono<AccountDTO> findByAccountNumber(String accountNumber);
     Mono<AccountDTO> save(AccountDTO account);
 }
