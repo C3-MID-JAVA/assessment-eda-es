@@ -1,6 +1,5 @@
 package ec.com.sofka;
 
-import ec.com.sofka.account.Account;
 import ec.com.sofka.data.RequestDTO;
 import ec.com.sofka.data.ResponseDTO;
 import ec.com.sofka.handlers.AccountHandler;
@@ -24,4 +23,5 @@ public class Rest {
     public ResponseEntity<ResponseDTO> createAccount(@RequestBody RequestDTO requestDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(handler.createAccount(requestDTO));
     }
+
 }

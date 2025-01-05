@@ -39,4 +39,5 @@ public abstract class Identity implements IValueObject<String> {
     public int hashCode() {
         return Objects.hashCode(value);
     }
+
 }

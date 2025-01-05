@@ -35,4 +35,5 @@ public class JSONMap implements IJSONMapper {
             throw new RuntimeException("Failed to deserialize event", e);
         }
     }
+
 }

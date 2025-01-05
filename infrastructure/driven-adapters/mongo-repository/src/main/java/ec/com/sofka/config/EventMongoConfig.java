@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
         mongoTemplateRef = "eventMongoTemplate")
 public class EventMongoConfig {
 
-
     @Bean(name = "eventsDatabaseFactory")
     public MongoDatabaseFactory eventsDatabaseFactory(
             @Value("${spring.data.mongodb.events-uri}") String uri) {

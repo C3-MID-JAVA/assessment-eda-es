@@ -11,13 +11,13 @@ public class AccountEntity {
     @Id
     private String id;
 
-    @Field("account_number")
+    @Field("accountNumber")
     private String accountNumber;
 
-    @Field("account_holder")
+    @Field("accountHolder")
     private String owner;
 
-    @Field("global_balance")
+    @Field("balance")
     private BigDecimal balance;
 
 

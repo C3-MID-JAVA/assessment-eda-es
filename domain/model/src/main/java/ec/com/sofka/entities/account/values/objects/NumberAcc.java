@@ -1,4 +1,4 @@
-package ec.com.sofka.account.values.objects;
+package ec.com.sofka.entities.account.values.objects;
 
 import ec.com.sofka.generics.interfaces.IValueObject;
 

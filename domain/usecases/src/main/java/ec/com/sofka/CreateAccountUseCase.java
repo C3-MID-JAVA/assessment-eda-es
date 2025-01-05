@@ -1,7 +1,6 @@
 package ec.com.sofka;
 
-
-import ec.com.sofka.aggregate.Customer;
+import ec.com.sofka.aggregate.agregates.Customer;
 import ec.com.sofka.request.CreateAccountRequest;
 import ec.com.sofka.gateway.AccountRepository;
 import ec.com.sofka.gateway.IEventStore;
@@ -20,7 +19,8 @@ public class CreateAccountUseCase implements IUseCase<CreateAccountRequest,Creat
     }
 
 
-    //Of course, you have to create that class Response in usecases module on a package called responses or you can also group the command with their response class in a folder (Screaming architecture)
+    //Of course, you have to create that class Response in usecases module on a package called responses or you can also
+    // group the command with their response class in a folder (Screaming architecture)
     //You maybe want to check Jacobo's repository to see how he did it
     public CreateAccountResponse execute(CreateAccountRequest cmd) {
         //Create the aggregate, remember this usecase is to create the account the first time so just have to create it.
@@ -35,7 +35,6 @@ public class CreateAccountUseCase implements IUseCase<CreateAccountRequest,Creat
                         customer.getAccount().getBalance().getValue(),
                         customer.getAccount().getNumber().getValue(),
                         customer.getAccount().getName().getValue()
-
                 ));
 
         //Last step for events to be saved
@@ -47,6 +46,9 @@ public class CreateAccountUseCase implements IUseCase<CreateAccountRequest,Creat
         return new CreateAccountResponse(
                 customer.getId().getValue(),
                 customer.getAccount().getNumber().getValue(),
-                customer.getAccount().getName().getValue());
+                customer.getAccount().getName().getValue()
+        );
+
     }
+
 }

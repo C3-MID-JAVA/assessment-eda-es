@@ -1,6 +1,5 @@
 package ec.com.sofka;
 
-import ec.com.sofka.account.Account;
 import ec.com.sofka.data.AccountEntity;
 import ec.com.sofka.database.account.IMongoRepository;
 import ec.com.sofka.gateway.AccountRepository;

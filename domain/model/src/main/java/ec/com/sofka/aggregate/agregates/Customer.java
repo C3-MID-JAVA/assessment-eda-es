@@ -1,7 +1,8 @@
-package ec.com.sofka.aggregate;
+package ec.com.sofka.aggregate.agregates;
 
-import ec.com.sofka.account.Account;
-import ec.com.sofka.aggregate.events.AccountCreated;
+import ec.com.sofka.entities.account.Account;
+import ec.com.sofka.aggregate.events.account.AccountCreated;
+import ec.com.sofka.aggregate.handler.CustomerHandler;
 import ec.com.sofka.aggregate.values.CustomerId;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;

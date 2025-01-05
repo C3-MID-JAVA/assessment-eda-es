@@ -1,4 +1,4 @@
-package ec.com.sofka.account.values.objects;
+package ec.com.sofka.entities.account.values.objects;
 
 import ec.com.sofka.generics.interfaces.IValueObject;
 
@@ -24,6 +24,7 @@ public class Balance implements IValueObject<BigDecimal> {
 
     //hello validations
     private BigDecimal validate(final BigDecimal value){
+
         if(value == null){
             throw new IllegalArgumentException("The balance can't be null");
         }
@@ -32,7 +33,7 @@ public class Balance implements IValueObject<BigDecimal> {
             throw new IllegalArgumentException("The balance must be greater than 0");
         }
 
-
         return value;
+
     }
 }

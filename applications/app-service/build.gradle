@@ -6,4 +6,5 @@ dependencies {
     implementation project (':mongo-repository')
     implementation project (':web')
     implementation project (':serializer')
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
