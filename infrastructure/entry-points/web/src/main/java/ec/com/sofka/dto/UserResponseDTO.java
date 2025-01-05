@@ -4,11 +4,13 @@ public class UserResponseDTO {
     private String id;
     private String name;
     private String documentId;
+    private String customerId;
 
-    public UserResponseDTO(String id, String name, String documentId) {
+    public UserResponseDTO(String id, String name, String documentId, String customerId) {
         this.id = id;
         this.name = name;
         this.documentId = documentId;
+        this.customerId = customerId;
     }
 
     public String getId() {
@@ -33,5 +35,13 @@ public class UserResponseDTO {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 }

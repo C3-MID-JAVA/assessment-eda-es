@@ -1,8 +1,8 @@
 package ec.com.sofka.user;
 
 import ec.com.sofka.generics.utils.Entity;
-import ec.com.sofka.user.values.DocumentId;
-import ec.com.sofka.user.values.Name;
+import ec.com.sofka.user.values.objects.DocumentId;
+import ec.com.sofka.user.values.objects.Name;
 import ec.com.sofka.user.values.UserId;
 
 public class User extends Entity<UserId> {

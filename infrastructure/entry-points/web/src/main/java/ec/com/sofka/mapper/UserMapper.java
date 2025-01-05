@@ -6,11 +6,11 @@ import ec.com.sofka.user.request.CreateUserRequest;
 import ec.com.sofka.user.responses.UserResponse;
 
 public class UserMapper {
-    public static UserResponseDTO fromEntity(UserResponse userResponse){
-        return new UserResponseDTO(userResponse.getCustomerId(), userResponse.getName(), userResponse.getDocumentId());
+    public static UserResponseDTO fromEntity(UserResponse userResponse) {
+        return new UserResponseDTO(userResponse.getId(), userResponse.getName(), userResponse.getDocumentId(), userResponse.getCustomerId());
     }
 
-    public static CreateUserRequest toEntity(UserRequestDTO userRequestDTO){
+    public static CreateUserRequest toEntity(UserRequestDTO userRequestDTO) {
         return new CreateUserRequest(userRequestDTO.getName(), userRequestDTO.getDocumentId());
     }
 }

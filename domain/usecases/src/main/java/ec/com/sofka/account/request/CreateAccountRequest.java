@@ -2,8 +2,7 @@ package ec.com.sofka.account.request;
 
 import ec.com.sofka.generics.utils.Request;
 
-public class CreateAccountRequest extends Request
-{
+public class CreateAccountRequest extends Request {
     private final String userId;
 
     public CreateAccountRequest(final String userId) {

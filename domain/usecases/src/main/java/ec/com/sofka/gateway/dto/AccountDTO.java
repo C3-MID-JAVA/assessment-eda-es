@@ -20,7 +20,7 @@ public class AccountDTO {
         this.customerId = customerId;
     }
 
-    public AccountDTO(String id,String accountNumber,BigDecimal balance, String userId, String customerId) {
+    public AccountDTO(String id, String accountNumber, BigDecimal balance, String userId, String customerId) {
         this.accountNumber = accountNumber;
         this.id = id;
         this.balance = balance;
@@ -48,5 +48,25 @@ public class AccountDTO {
 
     public String getCustomerId() {
         return customerId;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 }

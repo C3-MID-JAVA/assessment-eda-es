@@ -1,22 +1,19 @@
-package ec.com.sofka.account.responses;
+package ec.com.sofka.aggregate.customer.events;
+
+import ec.com.sofka.generics.domain.DomainEvent;
 
 import java.math.BigDecimal;
 
-public class AccountResponse {
-    private final String customerId;
+public class AccountBalanceUpdated extends DomainEvent {
     private final String accountNumber;
     private final BigDecimal balance;
     private final String userId;
 
-    public AccountResponse(String customerId, String accountNumber, BigDecimal balance, String userId) {
-        this.customerId = customerId;
+    public AccountBalanceUpdated(String accountNumber, BigDecimal balance, String userId) {
+        super(EventsEnum.ACCOUNT_BALANCE_UPDATED.name());
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.userId = userId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
     }
 
     public String getAccountNumber() {

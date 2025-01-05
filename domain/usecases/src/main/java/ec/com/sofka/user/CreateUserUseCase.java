@@ -1,6 +1,6 @@
 package ec.com.sofka.user;
 
-import ec.com.sofka.aggregate.Customer;
+import ec.com.sofka.aggregate.customer.Customer;
 import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.gateway.UserRepository;
 import ec.com.sofka.gateway.dto.UserDTO;
@@ -37,6 +37,7 @@ public class CreateUserUseCase implements IUseCase<CreateUserRequest, UserRespon
                 })
                 .doOnTerminate(customer::markEventsAsCommitted)
                 .thenReturn(new UserResponse(
+                        customer.getUser().getId().getValue(),
                         customer.getId().getValue(),
                         customer.getUser().getName().getValue(),
                         customer.getUser().getDocumentId().getValue()
