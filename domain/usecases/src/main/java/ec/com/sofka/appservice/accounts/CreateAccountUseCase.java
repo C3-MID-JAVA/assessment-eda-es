@@ -41,14 +41,16 @@ public class CreateAccountUseCase implements IUseCase <CreateAccountRequest,Crea
                 .switchIfEmpty(Mono.defer(() -> {
                     // Crear un cliente y una cuenta
                     Customer customer = new Customer();
-                    customer.createAccount(cmd.getBalance(), cmd.getNumber(), cmd.getCustomerName());
+                    customer.createAccount(cmd.getNumber(), cmd.getBalance(), cmd.getCustomerName(), cmd.getStatus());
 
                     // Guardar la cuenta en el repositorio
                     return accountRepository.save(
                                     new AccountDTO(
-                                            customer.getAccount().getBalance().getValue(),
+                                            customer.getAccount().getId().getValue(),
+                                            customer.getAccount().getOwner().getValue(),
                                             customer.getAccount().getAccountNumber().getValue(),
-                                            customer.getAccount().getOwner().getValue()
+                                            customer.getAccount().getBalance().getValue(),
+                                            customer.getAccount().getStatus().getValue()
                                     )
                             ).onErrorResume(e -> {
                                 // Maneja el error, por ejemplo, registrando el error
@@ -66,9 +68,11 @@ public class CreateAccountUseCase implements IUseCase <CreateAccountRequest,Crea
                                 // Devolver la respuesta
                                 return Mono.just(new CreateAccountResponse(
                                         customer.getId().getValue(),
+                                        customer.getAccount().getId().getValue(),
                                         customer.getAccount().getAccountNumber().getValue(),
                                         customer.getAccount().getOwner().getValue(),
-                                        customer.getAccount().getBalance().getValue()
+                                        customer.getAccount().getBalance().getValue(),
+                                        customer.getAccount().getStatus().getValue()
                                 ));
                             });
                 }));

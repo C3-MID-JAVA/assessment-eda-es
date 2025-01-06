@@ -6,8 +6,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface IAccountRepository {
-   Mono<AccountDTO> findByAccountNumber(String accountNumber);
-    Mono<AccountDTO> save(AccountDTO cuenta);
-    //Flux<Account> findAll();
-   // Mono<Account> findById(String id);
+    Flux<AccountDTO> findAll();
+    Mono<AccountDTO> findById(String id);
+    Mono<AccountDTO> findByAccountNumber(String accountNumber);
+    Mono<AccountDTO> save(AccountDTO accountDTO);
+    Mono<AccountDTO> update(AccountDTO accountDTO);
+    Mono<AccountDTO> delete(AccountDTO accountDTO);
 }

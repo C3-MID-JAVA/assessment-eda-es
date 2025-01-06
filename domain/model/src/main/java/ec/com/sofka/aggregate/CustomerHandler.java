@@ -5,6 +5,7 @@ import ec.com.sofka.account.values.AccountId;
 import ec.com.sofka.account.values.objects.Balance;
 import ec.com.sofka.account.values.objects.Owner;
 import ec.com.sofka.account.values.objects.NumberAcc;
+import ec.com.sofka.account.values.objects.Status;
 import ec.com.sofka.aggregate.events.AccountCreated;
 import ec.com.sofka.generics.domain.DomainActionsContainer;
 
@@ -14,10 +15,13 @@ public class CustomerHandler extends DomainActionsContainer {
     public CustomerHandler(Customer customer) {
         //8. Add the actions to the handler
         addDomainActions((AccountCreated event) -> {
-            Account account = new Account(new AccountId(),
+            Account account = new Account(
+                    AccountId.of(event.getAccountId()),
                     Balance.of(event.getAccountBalance()),
                     NumberAcc.of(event.getAccountNumber()),
-                    Owner.of(event.getName()));
+                    Owner.of(event.getName()),
+                    Status.of(event.getStatus())
+                    );
             customer.setAccount(account);
         });
 

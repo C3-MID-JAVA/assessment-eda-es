@@ -1,5 +1,6 @@
 package ec.com.sofka.generics.domain;
 
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;

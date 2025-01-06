@@ -25,12 +25,12 @@ public class GetAccountsUseCaseTest {
     @Mock
     private IBusMessage busMessage;
 
-    private GetAccountsUseCase useCase;
+    private GetAllAccountsUseCase useCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        useCase = new GetAccountsUseCase(repository, busMessage);
+        useCase = new GetAllAccountsUseCase(repository, busMessage);
     }
 
     @Test

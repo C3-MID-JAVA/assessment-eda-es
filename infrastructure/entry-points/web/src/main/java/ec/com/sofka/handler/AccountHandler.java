@@ -13,10 +13,10 @@ public class AccountHandler {
     private final CreateAccountUseCase createAccountUseCase;
     private final GetAccountByIdUseCase getAccountByIdUseCase;
     private final GetCheckBalanceUseCase getCheckBalanceUseCase;
-    private final GetAccountsUseCase getAccountsUseCase;
+    private final GetAllAccountsUseCase getAccountsUseCase;
 
-    public AccountHandler(GetAccountByAccountNumberUseCase getAccountByAccountNumberUseCase,CreateAccountUseCase createAccountUseCase,
-                          GetAccountsUseCase getAccountsUseCase,GetAccountByIdUseCase getAccountByIdUseCase, GetCheckBalanceUseCase getCheckBalanceUseCase) {
+    public AccountHandler(GetAccountByAccountNumberUseCase getAccountByAccountNumberUseCase, CreateAccountUseCase createAccountUseCase,
+                          GetAllAccountsUseCase getAccountsUseCase, GetAccountByIdUseCase getAccountByIdUseCase, GetCheckBalanceUseCase getCheckBalanceUseCase) {
         this.getAccountByAccountNumberUseCase = getAccountByAccountNumberUseCase;
         this.createAccountUseCase = createAccountUseCase;
         this.getAccountsUseCase = getAccountsUseCase;
