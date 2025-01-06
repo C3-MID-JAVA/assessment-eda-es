@@ -19,8 +19,10 @@ public class EventMongoConfig {
     @Bean(name = "eventsDatabaseFactory")
     public MongoDatabaseFactory eventsDatabaseFactory(
             @Value("${spring.data.mongodb.events-uri}") String uri) {
+        System.out.println("Mongo URI: " + uri);  // Agregar para depurar
         return new SimpleMongoClientDatabaseFactory(uri);
     }
+
 
     @Bean(name = "eventMongoTemplate")
     public MongoTemplate eventsMongoTemplate(@Qualifier("eventsDatabaseFactory") MongoDatabaseFactory eventsDatabaseFactory) {

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import ec.com.sofka.generics.domain.DomainEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,11 +28,12 @@ public class JSONMap implements IJSONMapper {
     }
 
     @Override
-    public Object readFromJson(String json, Class<?> clazz) {
+    public DomainEvent readFromJson(String json, Class<?> clazz) {
         try {
-            return mapper.readValue(json, clazz);
+            return (DomainEvent) mapper.readValue(json, clazz);
         } catch (JsonProcessingException | ClassCastException e) {
             throw new RuntimeException("Failed to deserialize event", e);
         }
     }
 }
+

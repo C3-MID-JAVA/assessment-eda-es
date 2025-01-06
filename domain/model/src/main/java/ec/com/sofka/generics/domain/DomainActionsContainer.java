@@ -9,6 +9,7 @@ public abstract class DomainActionsContainer {
     protected Set<Consumer<? super DomainEvent>>  domainActions = new HashSet<>();
 
     public void addDomainActions(Consumer<? extends DomainEvent> action) {
-       domainActions.add((Consumer<? super DomainEvent>) action );
+        domainActions.add((Consumer<? super DomainEvent>) action );
     }
 }
+

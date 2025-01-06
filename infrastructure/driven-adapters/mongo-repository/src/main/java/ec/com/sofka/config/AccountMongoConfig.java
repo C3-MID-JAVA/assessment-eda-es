@@ -1,5 +1,6 @@
 package ec.com.sofka.config;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +13,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoRepositories(basePackages = "ec.com.sofka.database.account",
-       mongoTemplateRef = "accountMongoTemplate")
+        mongoTemplateRef = "accountMongoTemplate")
 public class AccountMongoConfig {
+
     @Primary
     @Bean(name = "accountsDatabaseFactory")
     public MongoDatabaseFactory accountsDatabaseFactory(
@@ -21,10 +23,10 @@ public class AccountMongoConfig {
         return new SimpleMongoClientDatabaseFactory(uri);
     }
 
-
     @Primary
     @Bean(name = "accountMongoTemplate")
     public MongoTemplate accountsMongoTemplate(@Qualifier("accountsDatabaseFactory") MongoDatabaseFactory accountsDatabaseFactory) {
         return new MongoTemplate(accountsDatabaseFactory);
     }
 }
+
