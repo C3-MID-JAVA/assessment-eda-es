@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 //4. Generics creation to apply DDD: DomainEvent - An event that occurs in the domain
-public abstract class DomainEvent {
+public class DomainEvent {
     private final Instant when;
     private final String eventId;
     private final String eventType;
@@ -14,6 +14,15 @@ public abstract class DomainEvent {
     private String aggregateRootName;
 
     private Long version;
+
+    public DomainEvent(Instant when, String eventId, String eventType, String aggregateRootId, String aggregateRootName, Long version) {
+        this.when = when;
+        this.eventId = eventId;
+        this.eventType = eventType;
+        this.aggregateRootId = aggregateRootId;
+        this.aggregateRootName = aggregateRootName;
+        this.version = version;
+    }
 
     public DomainEvent(String eventType) {
         this.when = Instant.now();
@@ -57,5 +66,4 @@ public abstract class DomainEvent {
     public void setVersion(Long version) {
         this.version = version;
     }
-
 }
