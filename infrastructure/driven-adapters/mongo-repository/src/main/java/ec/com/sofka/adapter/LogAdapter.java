@@ -1,13 +1,7 @@
 package ec.com.sofka.adapter;
 
-import ec.com.sofka.log.Log;
-import ec.com.sofka.database.IMongoLogRepository;
-import ec.com.sofka.data.LogEntity;
-import ec.com.sofka.applogs.gateway.LogRepository;
-import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Mono;
-
-@Repository
+/*
+//@Repository
 public class LogAdapter implements LogRepository {
 
     private final IMongoLogRepository repository;
@@ -21,4 +15,4 @@ public class LogAdapter implements LogRepository {
         LogEntity logEntity = new LogEntity(log.getMessage(), log.getEntity(), log.getTimestamp());
         return repository.save(logEntity).then();
     }
-}
+}*/

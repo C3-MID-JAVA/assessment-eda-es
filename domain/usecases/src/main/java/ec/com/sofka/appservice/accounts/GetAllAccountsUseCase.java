@@ -43,15 +43,11 @@ public class GetAllAccountsUseCase implements IUseCaseGet<GetAccountResponse> {
                             ));
 
                     // Obtener la lista de los últimos eventos
-                    List<DomainEvent> latestEvents = mapLatestEvents.values().stream().toList();
+                    Flux<DomainEvent> latestEventsFlux = Flux.fromIterable(mapLatestEvents.values());
 
-                    // Reconstruir los clientes
-                    List<Customer> customers = latestEvents.stream()
-                            .map(event -> Customer.from(event.getAggregateRootId(), latestEvents))
-                            .toList();
-
-                    // Mapear a respuestas reactivas
-                    return Flux.fromIterable(customers)
+                    // Reconstruir los clientes de manera reactiva
+                    return latestEventsFlux
+                            .flatMap(event -> Customer.from(event.getAggregateRootId(), Flux.just(event))) // Usar el evento de forma reactiva
                             .map(customer -> new GetAccountResponse(
                                     customer.getId().getValue(),
                                     customer.getAccount().getId().getValue(),
@@ -62,6 +58,7 @@ public class GetAllAccountsUseCase implements IUseCaseGet<GetAccountResponse> {
                             ));
                 });
     }
+
 
 
 }

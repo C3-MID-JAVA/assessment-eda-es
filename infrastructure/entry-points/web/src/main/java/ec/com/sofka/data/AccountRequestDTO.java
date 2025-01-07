@@ -27,42 +27,37 @@ public class AccountRequestDTO {
     @Schema(description = "The name of the account owner", example = "Anderson Zambrano")
     public String owner;
 
-    public AccountRequestDTO(String customerId, String accountNumber, BigDecimal initialBalance, String owner) {
+    public String status;
+
+    public AccountRequestDTO(String customerId, String accountNumber, BigDecimal initialBalance, String owner,String status) {
         this.customerId = customerId;
         this.accountNumber = accountNumber;
         this.initialBalance = initialBalance;
         this.owner = owner;
+        this.status = status;
     }
 
     public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
 
     public String getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
 
     public BigDecimal getInitialBalance() {
         return initialBalance;
     }
 
-    public void setInitialBalance(BigDecimal initialBalance) {
-        this.initialBalance = initialBalance;
-    }
 
     public String getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public String getStatus() {
+        return status;
     }
+
 }

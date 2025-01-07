@@ -4,6 +4,7 @@ import ec.com.sofka.appservice.accounts.*;
 import ec.com.sofka.appservice.accounts.request.CreateAccountRequest;
 import ec.com.sofka.data.AccountRequestDTO;
 import ec.com.sofka.data.AccountResponseDTO;
+import ec.com.sofka.mapper.AccountDTOMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -14,14 +15,16 @@ public class AccountHandler {
     private final GetAccountByIdUseCase getAccountByIdUseCase;
     private final GetCheckBalanceUseCase getCheckBalanceUseCase;
     private final GetAllAccountsUseCase getAccountsUseCase;
+    private final DeleteAccountUseCase deleteAccountUseCase;
 
     public AccountHandler(GetAccountByAccountNumberUseCase getAccountByAccountNumberUseCase, CreateAccountUseCase createAccountUseCase,
-                          GetAllAccountsUseCase getAccountsUseCase, GetAccountByIdUseCase getAccountByIdUseCase, GetCheckBalanceUseCase getCheckBalanceUseCase) {
+                          GetAllAccountsUseCase getAccountsUseCase, GetAccountByIdUseCase getAccountByIdUseCase, GetCheckBalanceUseCase getCheckBalanceUseCase, DeleteAccountUseCase deleteAccountUseCase) {
         this.getAccountByAccountNumberUseCase = getAccountByAccountNumberUseCase;
         this.createAccountUseCase = createAccountUseCase;
         this.getAccountsUseCase = getAccountsUseCase;
         this.getAccountByIdUseCase = getAccountByIdUseCase;
         this.getCheckBalanceUseCase = getCheckBalanceUseCase;
+        this.deleteAccountUseCase = deleteAccountUseCase;
     }
 /*
     public Mono<AccountResponseDTO> getAccountByAccountNumber(String accountNumber) {
@@ -29,18 +32,12 @@ public class AccountHandler {
     }*/
 
     public Mono<AccountResponseDTO> createAccount(AccountRequestDTO request) {
+        // Mapear la solicitud de AccountRequestDTO a CreateAccountRequest
+        CreateAccountRequest createAccountRequest = AccountDTOMapper.toCreateAccountRequest(request);
+
         // Ejecutar el caso de uso y mapear la respuesta a un ResponseDTO
-        return createAccountUseCase.execute(
-                        new CreateAccountRequest(
-                                request.getInitialBalance(),
-                                request.getAccountNumber(),
-                                request.getOwner()
-                        ))
-                .map(response -> new AccountResponseDTO(
-                        response.getCustomerId(),
-                        response.getAccountNumber(),
-                        response.getBalance(),
-                        response.getName()));  // Mapear la respuesta reactiva
+        return createAccountUseCase.execute(createAccountRequest)
+                .map(response -> AccountDTOMapper.toAccountResponseDTO(response));
     }
 /*
     public Mono<AccountResponseDTO> getAccountByAccountId(String accountId) {

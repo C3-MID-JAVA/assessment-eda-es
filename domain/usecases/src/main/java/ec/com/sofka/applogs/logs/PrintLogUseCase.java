@@ -1,5 +1,5 @@
 package ec.com.sofka.applogs.logs;
-
+/*
 import ec.com.sofka.log.Log;
 import ec.com.sofka.applogs.gateway.LogRepository;
 
@@ -19,3 +19,4 @@ public class PrintLogUseCase{
         logRepository.create(log).subscribe();
     }
 }
+*/

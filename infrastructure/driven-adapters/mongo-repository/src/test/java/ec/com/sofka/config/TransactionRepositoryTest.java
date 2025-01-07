@@ -1,7 +1,7 @@
 package ec.com.sofka.config;
 
 import ec.com.sofka.data.TransactionEntity;
-import ec.com.sofka.database.transaction.IMongoTransactionRepository;
+import ec.com.sofka.database.account.IMongoTransactionRepository;
 import ec.com.sofka.enums.TransactionType;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;

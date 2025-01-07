@@ -10,6 +10,7 @@ import ec.com.sofka.appservice.gateway.IAccountRepository;
 import ec.com.sofka.appservice.gateway.IEventStore;
 import ec.com.sofka.appservice.gateway.dto.AccountDTO;
 import ec.com.sofka.generics.interfaces.IUseCase;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class CreateAccountUseCase implements IUseCase <CreateAccountRequest,CreateAccountResponse>{
@@ -22,16 +23,6 @@ public class CreateAccountUseCase implements IUseCase <CreateAccountRequest,Crea
         this.repository = repository;
         this.busMessage = busMessage;
     }
-/*
-    public Mono<Account> apply(Account account) {
-
-        return accountRepository.findByAccountNumber(account.getAccountNumber())
-                .flatMap(existingAccount -> Mono.<Account>error(new ConflictException("The account number is already registered.")))
-                .switchIfEmpty(Mono.defer(() -> accountRepository.save(account)
-                        .doOnSuccess(savedAccount -> {
-                            busMessage.sendMsg("account", "Create account: " + savedAccount.toString());
-                        })));
-    }*/
 
     @Override
     public Mono<CreateAccountResponse> execute(CreateAccountRequest cmd) {
@@ -61,20 +52,24 @@ public class CreateAccountUseCase implements IUseCase <CreateAccountRequest,Crea
                                 busMessage.sendMsg("account", "Create account: " + savedAccount.toString());
                             })
                             .flatMap(savedAccount -> {
-                                // Guardar los eventos no confirmados
-                                customer.getUncommittedEvents().forEach(repository::save);
-                                customer.markEventsAsCommitted();
-
-                                // Devolver la respuesta
-                                return Mono.just(new CreateAccountResponse(
+                                // Guardar los eventos no confirmados de manera reactiva
+                                return Flux.fromIterable(customer.getUncommittedEvents())
+                                        .flatMap(repository::save)
+                                        .then(Mono.just(savedAccount));  // Asegura que el flujo continúe con el savedAccount
+                            })
+                            .doOnTerminate(customer::markEventsAsCommitted)
+                            .map(savedAccount -> {
+                                // Devolver la respuesta con los detalles de la cuenta creada
+                                return new CreateAccountResponse(
                                         customer.getId().getValue(),
                                         customer.getAccount().getId().getValue(),
                                         customer.getAccount().getAccountNumber().getValue(),
                                         customer.getAccount().getOwner().getValue(),
                                         customer.getAccount().getBalance().getValue(),
                                         customer.getAccount().getStatus().getValue()
-                                ));
+                                );
                             });
                 }));
     }
+
 }

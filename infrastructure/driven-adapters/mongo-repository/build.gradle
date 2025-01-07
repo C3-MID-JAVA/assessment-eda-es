@@ -4,7 +4,6 @@ dependencies {
     implementation project(':exception')
     implementation project (':serializer')
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

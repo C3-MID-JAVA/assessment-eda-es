@@ -1,24 +1,27 @@
 package ec.com.sofka.mapper;
 
-import ec.com.sofka.account.Account;
 import ec.com.sofka.appservice.gateway.dto.AccountDTO;
 import ec.com.sofka.data.AccountEntity;
 
 public class AccountMapper {
-
     public static AccountEntity DtoToEntity(AccountDTO accountDTO) {
-        return new AccountEntity(accountDTO.getBalance(),
-                accountDTO.getOwner(),
-                accountDTO.getAccountNumber()
+        return new AccountEntity(
+                accountDTO.getId(),
+                accountDTO.getName(),
+                accountDTO.getAccountNumber(),
+                accountDTO.getBalance(),
+                accountDTO.getStatus()
         );
     }
 
     public static AccountDTO entityToDTO(AccountEntity accountEntity) {
         return new AccountDTO(
-                accountEntity.getBalance(),
+                accountEntity.getAccountId(),
+                accountEntity.getName(),
                 accountEntity.getAccountNumber(),
-                accountEntity.getOwner()
+                accountEntity.getBalance(),
+                accountEntity.getStatus()
+
         );
     }
 }
-

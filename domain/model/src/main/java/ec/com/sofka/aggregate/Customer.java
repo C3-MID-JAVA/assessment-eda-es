@@ -7,6 +7,8 @@ import ec.com.sofka.aggregate.events.AccountUpdated;
 import ec.com.sofka.aggregate.values.CustomerId;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,12 +55,11 @@ public class Customer extends AggregateRoot<CustomerId> {
     }
 
     //To rebuild the aggregate
-    public static Customer from(final String id, List<DomainEvent> events) {
+    public static Mono<Customer> from(final String id, Flux<DomainEvent> events) {
         Customer customer = new Customer(id);
-        events.stream()
-                .filter(event -> id.equals(event.getAggregateRootId()))
-                .forEach((event) -> customer.addEvent(event).apply());
-        return customer;
+        return events
+                .flatMap(event -> Mono.fromRunnable(() -> customer.addEvent(event).apply()))
+                .then(Mono.just(customer));
     }
 
 

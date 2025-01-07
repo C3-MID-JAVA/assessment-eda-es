@@ -6,41 +6,53 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
-@Document(collection = "account")
+@Document(collection = "bank_account")
 public class AccountEntity {
     @Id
     private String id;
+
+    @Field("account_id")
+    private String accountId;
 
     @Field("account_number")
     private String accountNumber;
 
     @Field("account_holder")
-    private String owner;
+    private String name;
 
     @Field("global_balance")
     private BigDecimal balance;
 
+    @Field("status_account")
+    private String status;
 
-    public AccountEntity(String id, BigDecimal balance, String owner, String accountNumber) {
-        this.id = id;
-        this.balance = balance;
-        this.owner = owner;
+    public AccountEntity(String accountId, String name, String accountNumber, BigDecimal balance,  String status) {
+        this.accountId = accountId;
+        this.name = name;
         this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.status = status;
     }
 
-    public AccountEntity(BigDecimal balance, String owner, String accountNumber) {
+    public AccountEntity(String id, String accountId, String name, String accountNumber, BigDecimal balance,  String status) {
         this.id = id;
-        this.balance = balance;
-        this.owner = owner;
+        this.accountId = accountId;
+        this.name = name;
         this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.status = status;
+    }
+
+    public AccountEntity(){
+
+    }
+
+    public String getAccountId() {
+        return accountId;
     }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
 
@@ -48,24 +60,21 @@ public class AccountEntity {
         return accountNumber;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+
+    public String getName() {
+        return name;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
 
     public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public String getStatus() {
+        return status;
     }
+
+
+
 }
 

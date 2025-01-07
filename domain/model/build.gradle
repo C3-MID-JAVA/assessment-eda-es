@@ -4,5 +4,5 @@ version = '0.0.1-SNAPSHOT'
 dependencies {
     implementation project(':exception')
     implementation group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.4'
-
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
