@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 @Schema(description = "Standard error response format")
-public class ErrorResponse {
+public class ApiError {
 
     @Schema(description = "Http Status", example = "BAD_REQUEST")
     private HttpStatus status;
@@ -16,7 +16,7 @@ public class ErrorResponse {
 
     private LocalDateTime timestamp;
 
-    public ErrorResponse(HttpStatus status, String error) {
+    public ApiError(HttpStatus status, String error) {
         this.status = status;
         this.error = error;
         this.timestamp = LocalDateTime.now();
