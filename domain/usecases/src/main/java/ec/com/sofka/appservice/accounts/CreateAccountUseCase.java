@@ -51,24 +51,22 @@ public class CreateAccountUseCase implements IUseCase <CreateAccountRequest,Crea
                                 // Enviar mensaje de evento después de guardar
                                 busMessage.sendMsg("account", "Create account: " + savedAccount.toString());
                             })
-                            .flatMap(savedAccount -> {
-                                // Guardar los eventos no confirmados de manera reactiva
-                                return Flux.fromIterable(customer.getUncommittedEvents())
-                                        .flatMap(repository::save)
-                                        .then(Mono.just(savedAccount));  // Asegura que el flujo continúe con el savedAccount
-                            })
-                            .doOnTerminate(customer::markEventsAsCommitted)
-                            .map(savedAccount -> {
-                                // Devolver la respuesta con los detalles de la cuenta creada
-                                return new CreateAccountResponse(
-                                        customer.getId().getValue(),
-                                        customer.getAccount().getId().getValue(),
-                                        customer.getAccount().getAccountNumber().getValue(),
-                                        customer.getAccount().getOwner().getValue(),
-                                        customer.getAccount().getBalance().getValue(),
-                                        customer.getAccount().getStatus().getValue()
-                                );
+                            .flatMap(savedAccount -> Flux.fromIterable(customer.getUncommittedEvents())
+                                    .flatMap(repository::save)
+                                    .then(
+                                            Mono.just(new CreateAccountResponse(
+                                                            customer.getId().getValue(),
+                                                            customer.getAccount().getId().getValue(),
+                                                            customer.getAccount().getAccountNumber().getValue(),
+                                                            customer.getAccount().getOwner().getValue(),
+                                                            customer.getAccount().getBalance().getValue(),
+                                                            customer.getAccount().getStatus().getValue())
+                                    ))
+                            )
+                            .doOnSuccess(saved -> {
+                                customer.markEventsAsCommitted();
                             });
+
                 }));
     }
 

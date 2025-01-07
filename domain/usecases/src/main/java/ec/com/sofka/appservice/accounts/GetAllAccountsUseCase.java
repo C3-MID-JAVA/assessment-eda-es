@@ -39,7 +39,8 @@ public class GetAllAccountsUseCase implements IUseCaseGet<GetAccountResponse> {
                             .collect(Collectors.toMap(
                                     DomainEvent::getAggregateRootId,   // Clave: aggregateId
                                     event -> event,                   // Valor: el evento en sí
-                                    (existing, replacement) -> existing.getVersion() >= replacement.getVersion() ? existing : replacement // Conservar la última versión
+                                    (existing, replacement) ->
+                                            existing.getVersion() >= replacement.getVersion() ? existing : replacement // Conservar la última versión
                             ));
 
                     // Obtener la lista de los últimos eventos

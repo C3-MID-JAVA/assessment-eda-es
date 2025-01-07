@@ -176,11 +176,12 @@ public class AccountRouter {
     })
     public RouterFunction<ServerResponse> accountRoutes() {
         return RouterFunctions
-                .route(POST("/accounts").and(accept(MediaType.APPLICATION_JSON)), this::createAccount);
-               // .andRoute(GET("/accounts/accountNumber/{accountNumber}"), this::getAccountByAccountNumber)
-                //.andRoute(GET("/accounts/getAll"), this::listAccounts)
-                //.andRoute(GET("/accounts/{accountId}"), this::getAccountById)
-                //.andRoute(GET("/accounts/{accountId}/balance"), this::getAccountBalance);
+                .route(POST("/accounts").and(accept(MediaType.APPLICATION_JSON)), this::createAccount)
+                //.andRoute(GET("/accounts/accountNumber/{accountNumber}"), this::getAccountByAccountNumber)
+                .andRoute(GET("/accounts/getAll"), this::listAccounts)
+               // .andRoute(GET("/accounts/{accountId}"), this::getAccountById)
+               // .andRoute(GET("/accounts/{accountId}/balance"), this::getAccountBalance);
+        ;
     }
 
     public Mono<ServerResponse> createAccount(ServerRequest request) {
@@ -196,16 +197,22 @@ public class AccountRouter {
 /*
     public Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
         String accountNumber = request.pathVariable("accountNumber");
-        return handler.getAccountByAccountNumber(accountNumber)
+
+        // Construir el objeto AccountRequestDTO
+        AccountRequestDTO accountRequestDTO = new AccountRequestDTO(accountNumber);
+
+        return handler.getAccountByNumber(accountRequestDTO)
                 .flatMap(accountResponseDTO -> ServerResponse
-                        .status(HttpStatus.OK)
+                        .ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(accountResponseDTO))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
+*/
+
 
     public Mono<ServerResponse> listAccounts(ServerRequest request) {
-        return handler.getAccounts()
+        return handler.getAllAccounts()
                 .collectList()
                 .flatMap(accounts -> ServerResponse
                         .status(HttpStatus.OK)
@@ -213,7 +220,7 @@ public class AccountRouter {
                         .bodyValue(accounts))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
-
+/*
     private Mono<ServerResponse> getAccountById(ServerRequest request) {
         String accountId = request.pathVariable("accountId");
         return handler.getAccountByAccountId(accountId)
@@ -222,8 +229,8 @@ public class AccountRouter {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(response))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }
-
+    }*/
+/*
     private Mono<ServerResponse> getAccountBalance(ServerRequest request) {
         String accountId = request.pathVariable("accountId");
         return handler.getCheckBalance(accountId)
@@ -232,6 +239,6 @@ public class AccountRouter {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(balance))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }
-*/
+    }*/
+
 }

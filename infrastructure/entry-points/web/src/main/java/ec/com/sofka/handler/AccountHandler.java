@@ -2,10 +2,14 @@ package ec.com.sofka.handler;
 
 import ec.com.sofka.appservice.accounts.*;
 import ec.com.sofka.appservice.accounts.request.CreateAccountRequest;
+import ec.com.sofka.appservice.accounts.request.GetAccountRequest;
+import ec.com.sofka.appservice.accounts.request.UpdateAccountRequest;
 import ec.com.sofka.data.AccountRequestDTO;
 import ec.com.sofka.data.AccountResponseDTO;
 import ec.com.sofka.mapper.AccountDTOMapper;
+import ec.com.sofka.mapper.AccountMapper;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -16,20 +20,22 @@ public class AccountHandler {
     private final GetCheckBalanceUseCase getCheckBalanceUseCase;
     private final GetAllAccountsUseCase getAccountsUseCase;
     private final DeleteAccountUseCase deleteAccountUseCase;
+    private final UpdateAccountUseCase updateAccountUseCase;
+
+
 
     public AccountHandler(GetAccountByAccountNumberUseCase getAccountByAccountNumberUseCase, CreateAccountUseCase createAccountUseCase,
-                          GetAllAccountsUseCase getAccountsUseCase, GetAccountByIdUseCase getAccountByIdUseCase, GetCheckBalanceUseCase getCheckBalanceUseCase, DeleteAccountUseCase deleteAccountUseCase) {
+                          GetAllAccountsUseCase getAccountsUseCase, GetAccountByIdUseCase getAccountByIdUseCase,
+                          GetCheckBalanceUseCase getCheckBalanceUseCase, DeleteAccountUseCase deleteAccountUseCase,
+                          UpdateAccountUseCase updateAccountUseCase) {
         this.getAccountByAccountNumberUseCase = getAccountByAccountNumberUseCase;
         this.createAccountUseCase = createAccountUseCase;
         this.getAccountsUseCase = getAccountsUseCase;
         this.getAccountByIdUseCase = getAccountByIdUseCase;
         this.getCheckBalanceUseCase = getCheckBalanceUseCase;
         this.deleteAccountUseCase = deleteAccountUseCase;
+        this.updateAccountUseCase = updateAccountUseCase;
     }
-/*
-    public Mono<AccountResponseDTO> getAccountByAccountNumber(String accountNumber) {
-        return getAccountByAccountNumberUseCase.apply(accountNumber).map(AccountDTOMapper::accountToAccountResponseDTO);
-    }*/
 
     public Mono<AccountResponseDTO> createAccount(AccountRequestDTO request) {
         // Mapear la solicitud de AccountRequestDTO a CreateAccountRequest
@@ -39,18 +45,70 @@ public class AccountHandler {
         return createAccountUseCase.execute(createAccountRequest)
                 .map(response -> AccountDTOMapper.toAccountResponseDTO(response));
     }
-/*
-    public Mono<AccountResponseDTO> getAccountByAccountId(String accountId) {
-        return getAccountByIdUseCase.apply(accountId)
-                .map(AccountDTOMapper::accountToAccountResponseDTO);
+
+
+    public Flux<AccountResponseDTO> getAllAccounts() {
+        return getAccountsUseCase.get()
+                .map(accountResponse -> new AccountResponseDTO(
+                        accountResponse.getCustomerId(),
+                        accountResponse.getAccountId(),
+                        accountResponse.getName(),
+                        accountResponse.getAccountNumber(),
+                        accountResponse.getBalance(),
+                        accountResponse.getStatus()
+                ));
     }
 
-    public Mono<BigDecimal> getCheckBalance(String accountId) {
-        return getCheckBalanceUseCase.apply(accountId);
+    public Mono<AccountResponseDTO> getAccountByNumber(AccountRequestDTO request) {
+        return getAccountByAccountNumberUseCase.execute(
+                new GetAccountRequest(
+                        request.getCustomerId(),
+                        request.getAccountNumber()
+                )).map(response -> new AccountResponseDTO(
+                response.getCustomerId(),
+                response.getAccountId(),
+                response.getName(),
+                response.getAccountNumber(),
+                response.getBalance(),
+                response.getStatus()
+        ));
     }
 
-    public Flux<AccountResponseDTO> getAccounts() {
-        return getAccountsUseCase.apply().map(AccountDTOMapper::accountToAccountResponseDTO);
-    }*/
+    public Mono<AccountResponseDTO> updateAccount(AccountRequestDTO request) {
+        return updateAccountUseCase.execute(
+                new UpdateAccountRequest(
+                        request.getCustomerId(),
+                        request.getInitialBalance(),
+                        request.getAccountNumber(),
+                        request.getOwner(),
+                        request.getStatus()
+                )).map(response -> new AccountResponseDTO(
+                response.getCustomerId(),
+                response.getAccountId(),
+                response.getName(),
+                response.getAccountNumber(),
+                response.getBalance(),
+                response.getStatus()
+        ));
+    }
+
+    public Mono<AccountResponseDTO> deleteAccount(AccountRequestDTO request) {
+        return deleteAccountUseCase.execute(
+                new UpdateAccountRequest(
+                        request.getCustomerId(),
+                        request.getInitialBalance(),
+                        request.getAccountNumber(),
+                        request.getOwner(),
+                        request.getStatus()
+                )).map(response -> new AccountResponseDTO(
+                response.getCustomerId(),
+                response.getAccountId(),
+                response.getName(),
+                response.getAccountNumber(),
+                response.getBalance(),
+                response.getStatus()
+        ));
+    }
+
 
 }

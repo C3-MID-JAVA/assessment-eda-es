@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.SimpleReactiveMongoDatabaseFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
-
 @Configuration
 @EnableReactiveMongoRepositories(basePackages = "ec.com.sofka.database.events",
         reactiveMongoTemplateRef = "eventMongoTemplate")
@@ -27,7 +26,7 @@ public class EventMongoConfig {
     @Bean(name = "eventsDatabaseFactory")
     public ReactiveMongoDatabaseFactory eventsDatabaseFactory() {
         MongoClient mongoClient = MongoClients.create(eventMongoUri);
-        return new SimpleReactiveMongoDatabaseFactory(mongoClient, "logs");
+        return new SimpleReactiveMongoDatabaseFactory(mongoClient, "events_eda_es");
     }
 
     @Bean(name = "eventMongoTemplate")

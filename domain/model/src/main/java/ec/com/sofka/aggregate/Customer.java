@@ -62,5 +62,4 @@ public class Customer extends AggregateRoot<CustomerId> {
                 .then(Mono.just(customer));
     }
 
-
 }

@@ -39,8 +39,7 @@ public class EventMongoAdapter implements IEventStore {
                 event.getWhen().toString(),
                 event.getVersion()
         );
-        return repository.save(e)
-                .thenReturn(event);
+        return repository.save(e).flatMap( ev->Mono.just(event));
     }
 
     @Override
@@ -56,6 +55,5 @@ public class EventMongoAdapter implements IEventStore {
                 .sort(Comparator.comparing(DomainEvent::getAggregateRootId)
                         .thenComparing(DomainEvent::getVersion, Comparator.reverseOrder())); // Ordenar los eventos
     }
-
 }
 
