@@ -39,15 +39,14 @@ public class TransactionHandler {
     }
 
     public Mono<ServerResponse> getAllByAccountNumber(ServerRequest request) {
-        String accountNumber = request.pathVariable("accountNumber");
-
-        return getAllByAccountNumberUseCase.execute(new GetAllByAccountNumberRequest(accountNumber))
-                .map(TransactionMapper::fromEntity)
+        return request.bodyToMono(GetAllByAccountNumberRequest.class)
+                .flatMapMany(getAllByAccountNumberUseCase::execute)
                 .collectList()
                 .flatMap(transactionResponseDTOs ->
                         ServerResponse
                                 .ok()
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(transactionResponseDTOs));
+                                .bodyValue(transactionResponseDTOs)
+                );
     }
 }

@@ -8,26 +8,28 @@ import java.time.LocalDateTime;
 
 
 public class TransactionResponseDTO {
-    private String id;
+    private String operationId;
     private BigDecimal fee;
     private BigDecimal netAmount;
     private TransactionType type;
     private LocalDateTime timestamp;
+    private String customerId;
 
-    public TransactionResponseDTO(String id, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp) {
-        this.id = id;
+    public TransactionResponseDTO(String operationId, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String customerId) {
+        this.operationId = operationId;
         this.fee = fee;
         this.netAmount = netAmount;
         this.type = type;
         this.timestamp = timestamp;
+        this.customerId = customerId;
     }
 
-    public String getId() {
-        return id;
+    public String getOperationId() {
+        return operationId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setOperationId(String operationId) {
+        this.operationId = operationId;
     }
 
     public BigDecimal getFee() {
@@ -60,5 +62,13 @@ public class TransactionResponseDTO {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 }

@@ -1,21 +1,25 @@
 package ec.com.sofka.aggregate.customer;
 
 import ec.com.sofka.account.Account;
-import ec.com.sofka.aggregate.customer.events.AccountBalanceUpdated;
-import ec.com.sofka.aggregate.customer.events.AccountCreated;
-import ec.com.sofka.aggregate.customer.events.UserCreated;
+import ec.com.sofka.account.values.AccountId;
+import ec.com.sofka.aggregate.events.AccountBalanceUpdated;
+import ec.com.sofka.aggregate.events.AccountCreated;
+import ec.com.sofka.aggregate.events.UserCreated;
 import ec.com.sofka.aggregate.customer.values.CustomerId;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;
 import ec.com.sofka.user.User;
+import ec.com.sofka.user.values.UserId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Customer extends AggregateRoot<CustomerId> {
-    private Account account;
     private User user;
+    private List<Account> accounts = new ArrayList<>();
 
     public Customer() {
         super(new CustomerId());
@@ -27,12 +31,12 @@ public class Customer extends AggregateRoot<CustomerId> {
         setSubscription(new CustomerHandler(this));
     }
 
-    public Account getAccount() {
-        return account;
+    public List<Account> getAccounts() {
+        return accounts;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
     public User getUser() {
@@ -44,21 +48,24 @@ public class Customer extends AggregateRoot<CustomerId> {
     }
 
     public void createAccount(BigDecimal balance, String accountNumber, String userId) {
-        addEvent(new AccountCreated(accountNumber, balance, userId)).apply();
+        addEvent(new AccountCreated(new AccountId().getValue(), accountNumber, balance, userId)).apply();
     }
 
-    public void updateAccountBalance(BigDecimal balance, String accountNumber, String userId) {
-        addEvent(new AccountBalanceUpdated(accountNumber, balance, userId)).apply();
+    public void updateAccountBalance(String id, BigDecimal balance, String accountNumber, String userId) {
+        addEvent(new AccountBalanceUpdated(id, accountNumber, balance, userId)).apply();
     }
 
     public void createUser(String name, String documentId) {
-        addEvent(new UserCreated(name, documentId)).apply();
+        addEvent(new UserCreated(new UserId().getValue(), name, documentId)).apply();
     }
 
     public static Mono<Customer> from(final String id, Flux<DomainEvent> events) {
         Customer customer = new Customer(id);
         return events
-                .flatMap(event -> Mono.fromRunnable(() -> customer.addEvent(event).apply()))
+                .filter(eventsFilter -> id.equals(eventsFilter.getAggregateRootId()))
+                .concatMap(event -> Mono.just(event)
+                        .doOnNext(e -> customer.addEvent(e).apply())
+                )
                 .then(Mono.just(customer));
     }
 }

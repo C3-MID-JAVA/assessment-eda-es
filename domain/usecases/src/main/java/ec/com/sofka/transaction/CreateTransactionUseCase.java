@@ -10,6 +10,7 @@ import ec.com.sofka.gateway.AccountRepository;
 import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.gateway.TransactionRepository;
 import ec.com.sofka.gateway.dto.TransactionDTO;
+import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;
 import ec.com.sofka.transaction.request.CreateTransactionRequest;
 import ec.com.sofka.transaction.responses.TransactionResponse;
@@ -34,72 +35,82 @@ public class CreateTransactionUseCase implements IUseCase<CreateTransactionReque
 
     @Override
     public Mono<TransactionResponse> execute(CreateTransactionRequest cmd) {
-        return accountRepository.findByAccountNumber(cmd.getAccountId())
-                .switchIfEmpty(Mono.error(new NotFoundException("Account not found")))
-                .flatMap(accountDTO -> {
-                    Operation operation = new Operation();
+        Flux<DomainEvent> eventsCustomer = repository.findAggregate(cmd.getCustomerId());
 
-                    TransactionStrategy strategy = strategyFactory.getStrategy(cmd.getType());
-                    BigDecimal fee = strategy.calculateFee();
-                    BigDecimal netAmount = cmd.getAmount().add(fee);
-                    BigDecimal balance = strategy.calculateBalance(accountDTO.getBalance(), cmd.getAmount());
+        return Customer.from(cmd.getCustomerId(), eventsCustomer)
+                .flatMap(customer -> Mono.justOrEmpty(
+                                customer.getAccounts().stream()
+                                        .filter(account -> account.getAccountNumber().getValue().equals(cmd.getAccountNumber()))
+                                        .findFirst()
+                        )
+                        .switchIfEmpty(Mono.error(new NotFoundException("Account not found")))
+                        .flatMap(account -> accountRepository.findByAccountNumber(account.getAccountNumber().getValue())
+                                .switchIfEmpty(Mono.error(new NotFoundException("Account not found")))
+                                .flatMap(accountDTO -> {
+                                    Operation operation = new Operation();
 
-                    if (balance.compareTo(BigDecimal.ZERO) < 0) {
-                        throw new BadRequestException("Insufficient balance for this transaction.");
-                    }
+                                    TransactionStrategy strategy = strategyFactory.getStrategy(cmd.getType());
+                                    BigDecimal fee = strategy.calculateFee();
+                                    BigDecimal netAmount = cmd.getAmount().add(fee);
+                                    BigDecimal balance = strategy.calculateBalance(accountDTO.getBalance(), cmd.getAmount());
 
-                    operation.createTransaction(
-                            cmd.getAmount(),
-                            fee,
-                            netAmount,
-                            LocalDateTime.now(),
-                            cmd.getType(),
-                            accountDTO.getId()
-                    );
+                                    if (balance.compareTo(BigDecimal.ZERO) < 0) {
+                                        throw new BadRequestException("Insufficient balance for this transaction.");
+                                    }
 
-                    return transactionRepository.save(new TransactionDTO(
-                                    operation.getTransaction().getAmount().getValue(),
-                                    operation.getTransaction().getFee().getValue(),
-                                    operation.getTransaction().getNetAmount().getValue(),
-                                    operation.getTransaction().getType().getValue(),
-                                    operation.getTransaction().getTimestamp().getValue(),
-                                    operation.getTransaction().getAccountId().getValue(),
-                                    operation.getId().getValue()
-                            ))
-                            .flatMap(transactionDTO -> {
-                                accountDTO.setBalance(balance);
-                                return accountRepository.save(accountDTO);
-                            })
-                            .flatMap(savedAccount -> {
-                                return repository.findAggregate(savedAccount.getCustomerId())
-                                        .collectList()
-                                        .flatMap(events -> Customer.from(savedAccount.getCustomerId(), Flux.fromIterable(events)))
-                                        .flatMap(customer -> {
-                                            customer.updateAccountBalance(balance, savedAccount.getAccountNumber(), savedAccount.getUserId());
+                                    operation.createTransaction(
+                                            cmd.getAmount(),
+                                            fee,
+                                            netAmount,
+                                            LocalDateTime.now(),
+                                            cmd.getType(),
+                                            accountDTO.getId()
+                                    );
 
-                                            return Flux.concat(
-                                                            Flux.fromIterable(operation.getUncommittedEvents())
-                                                                    .flatMap(repository::save),
-                                                            Flux.fromIterable(customer.getUncommittedEvents())
-                                                                    .flatMap(repository::save)
-                                                    )
-                                                    .doOnTerminate(() -> {
-                                                        operation.markEventsAsCommitted();
-                                                        customer.markEventsAsCommitted();
-                                                    })
-                                                    .then()
-                                                    .thenReturn(new TransactionResponse(
-                                                            operation.getId().getValue(),
-                                                            operation.getTransaction().getAmount().getValue(),
-                                                            operation.getTransaction().getFee().getValue(),
-                                                            operation.getTransaction().getNetAmount().getValue(),
-                                                            operation.getTransaction().getType().getValue(),
-                                                            operation.getTransaction().getTimestamp().getValue(),
-                                                            operation.getTransaction().getAccountId().getValue()
-                                                    ));
-                                        });
-                            });
+                                    return transactionRepository.save(new TransactionDTO(
+                                                    operation.getTransaction().getId().getValue(),
+                                                    operation.getTransaction().getAmount().getValue(),
+                                                    operation.getTransaction().getFee().getValue(),
+                                                    operation.getTransaction().getNetAmount().getValue(),
+                                                    operation.getTransaction().getType().getValue(),
+                                                    operation.getTransaction().getTimestamp().getValue(),
+                                                    operation.getTransaction().getAccountId().getValue()
+                                            ))
+                                            .flatMap(transactionDTO -> {
+                                                accountDTO.setBalance(balance);
+                                                return accountRepository.save(accountDTO)
+                                                        .flatMap(savedAccount -> {
+                                                            customer.updateAccountBalance(
+                                                                    savedAccount.getId(),
+                                                                    balance,
+                                                                    savedAccount.getAccountNumber(),
+                                                                    savedAccount.getUserId()
+                                                            );
 
-                });
+                                                            return Flux.concat(
+                                                                            Flux.fromIterable(operation.getUncommittedEvents())
+                                                                                    .flatMap(repository::save),
+                                                                            Flux.fromIterable(customer.getUncommittedEvents())
+                                                                                    .flatMap(repository::save)
+                                                                    )
+                                                                    .doOnTerminate(() -> {
+                                                                        operation.markEventsAsCommitted();
+                                                                        customer.markEventsAsCommitted();
+                                                                    })
+                                                                    .then()
+                                                                    .thenReturn(new TransactionResponse(
+                                                                            operation.getId().getValue(),
+                                                                            operation.getTransaction().getAmount().getValue(),
+                                                                            operation.getTransaction().getFee().getValue(),
+                                                                            operation.getTransaction().getNetAmount().getValue(),
+                                                                            operation.getTransaction().getType().getValue(),
+                                                                            operation.getTransaction().getTimestamp().getValue(),
+                                                                            operation.getTransaction().getAccountId().getValue(),
+                                                                            customer.getId().getValue()
+                                                                    ));
+                                                        });
+                                            });
+                                })
+                        ));
     }
 }

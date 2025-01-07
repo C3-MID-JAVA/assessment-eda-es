@@ -106,6 +106,6 @@ public class TransactionRouter {
     public RouterFunction<ServerResponse> transactionRoutes() {
         return RouterFunctions
                 .route(RequestPredicates.POST("/transactions").and(accept(MediaType.APPLICATION_JSON)), transactionHandler::create)
-                .andRoute(RequestPredicates.GET("/transactions/{accountNumber}/account"), transactionHandler::getAllByAccountNumber);
+                .andRoute(RequestPredicates.POST("/transactions/account"), transactionHandler::getAllByAccountNumber);
     }
 }

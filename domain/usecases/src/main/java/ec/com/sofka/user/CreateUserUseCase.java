@@ -26,9 +26,9 @@ public class CreateUserUseCase implements IUseCase<CreateUserRequest, UserRespon
         customer.createUser(cmd.getName(), cmd.getDocumentId());
 
         return userRepository.save(new UserDTO(
+                        customer.getUser().getId().getValue(),
                         customer.getUser().getName().getValue(),
-                        customer.getUser().getDocumentId().getValue(),
-                        customer.getId().getValue()
+                        customer.getUser().getDocumentId().getValue()
                 ))
                 .flatMap(savedUser -> {
                     return Flux.fromIterable(customer.getUncommittedEvents())
@@ -37,7 +37,6 @@ public class CreateUserUseCase implements IUseCase<CreateUserRequest, UserRespon
                 })
                 .doOnTerminate(customer::markEventsAsCommitted)
                 .thenReturn(new UserResponse(
-                        customer.getUser().getId().getValue(),
                         customer.getId().getValue(),
                         customer.getUser().getName().getValue(),
                         customer.getUser().getDocumentId().getValue()

@@ -1,4 +1,4 @@
-package ec.com.sofka.aggregate.operation.events;
+package ec.com.sofka.aggregate.events;
 
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.transaction.TransactionType;
@@ -7,21 +7,31 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class TransactionCreated extends DomainEvent {
-    private final BigDecimal amount;
-    private final BigDecimal fee;
-    private final BigDecimal netAmount;
-    private final TransactionType type;
-    private final LocalDateTime timestamp;
-    private final String accountId;
+    private String id;
+    private BigDecimal amount;
+    private BigDecimal fee;
+    private BigDecimal netAmount;
+    private TransactionType type;
+    private LocalDateTime timestamp;
+    private String accountId;
 
-    public TransactionCreated(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
-        super(EventsEnum.TRANSACTION_CREATED.name());
+    public TransactionCreated(String id, BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
+        super(EventsTransactionEnum.TRANSACTION_CREATED.name());
+        this.id = id;
         this.amount = amount;
         this.fee = fee;
         this.netAmount = netAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
+    }
+
+    public TransactionCreated() {
+        super(EventsTransactionEnum.TRANSACTION_CREATED.name());
+    }
+
+    public String getId() {
+        return id;
     }
 
     public BigDecimal getAmount() {

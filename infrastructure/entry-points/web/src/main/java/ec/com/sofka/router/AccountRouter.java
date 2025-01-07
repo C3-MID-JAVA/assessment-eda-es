@@ -129,7 +129,7 @@ public class AccountRouter {
     })
     public RouterFunction<ServerResponse> accountRoutes(){
         return RouterFunctions
-                .route(RequestPredicates.GET("/accounts/{id}"), accountHandler::getByAccountNumber)
+                .route(RequestPredicates.POST("/accounts/number"), accountHandler::getByAccountNumber)
                 .andRoute(RequestPredicates.POST("/accounts").and(accept(MediaType.APPLICATION_JSON)), accountHandler::create)
                 .andRoute(RequestPredicates.GET("/accounts/{userId}/user"), accountHandler::getAllByUserId);
     }

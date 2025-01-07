@@ -1,27 +1,43 @@
 package ec.com.sofka.user;
 
-import ec.com.sofka.gateway.UserRepository;
-import ec.com.sofka.generics.interfaces.IUseCase;
-import ec.com.sofka.user.request.EmptyRequest;
+import ec.com.sofka.aggregate.customer.Customer;
+import ec.com.sofka.gateway.IEventStore;
+import ec.com.sofka.generics.domain.DomainEvent;
+import ec.com.sofka.generics.interfaces.IUseEmptyCase;
 import ec.com.sofka.user.responses.UserResponse;
 import reactor.core.publisher.Flux;
 
-public class GetAllUserUseCase implements IUseCase<EmptyRequest, UserResponse> {
-    private final UserRepository userRepository;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-    public GetAllUserUseCase(UserRepository userRepository) {
-        this.userRepository = userRepository;
+public class GetAllUserUseCase implements IUseEmptyCase<UserResponse> {
+    /*    private final UserRepository userRepository;*/
+    private final IEventStore repository;
+
+    public GetAllUserUseCase(/*UserRepository userRepository,*/ IEventStore repository) {
+        /*        this.userRepository = userRepository;*/
+        this.repository = repository;
     }
 
     @Override
-    public Flux<UserResponse> execute(EmptyRequest request) {
-        return userRepository.getAll()
-                .map(userDTO -> new UserResponse(
-                                userDTO.getId(),
-                                userDTO.getCustomerId(),
-                                userDTO.getName(),
-                                userDTO.getDocumentId()
-                        )
+    public Flux<UserResponse> execute() {
+        return repository.findAllAggregate("customer")
+                .collectList()
+                .flatMapMany(events -> {
+                    Map<String, DomainEvent> latestEvents = events.stream()
+                            .collect(Collectors.toMap(
+                                    DomainEvent::getAggregateRootId,
+                                    event -> event,
+                                    (existing, replacement) -> existing.getVersion() >= replacement.getVersion() ? existing : replacement
+                            ));
+
+                    return Flux.fromIterable(latestEvents.values())
+                            .flatMap(event -> Customer.from(event.getAggregateRootId(), Flux.fromIterable(events)));
+                })
+                .map(customer -> new UserResponse(
+                        customer.getId().getValue(),
+                        customer.getUser().getName().getValue(),
+                        customer.getUser().getDocumentId().getValue())
                 );
     }
 }

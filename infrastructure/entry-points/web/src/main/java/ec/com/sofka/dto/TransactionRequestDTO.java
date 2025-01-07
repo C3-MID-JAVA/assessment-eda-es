@@ -18,10 +18,14 @@ public class TransactionRequestDTO {
     @NotBlank(message = "Account number cannot be blank")
     private String accountNumber;
 
-    public TransactionRequestDTO(BigDecimal amount, TransactionType type, String accountNumber) {
+    @NotBlank(message = "Customer id cannot be blank")
+    private String customerId;
+
+    public TransactionRequestDTO(BigDecimal amount, TransactionType type, String accountNumber, String customerId) {
         this.amount = amount;
         this.type = type;
         this.accountNumber = accountNumber;
+        this.customerId = customerId;
     }
 
     public BigDecimal getAmount() {
@@ -46,5 +50,13 @@ public class TransactionRequestDTO {
 
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 }

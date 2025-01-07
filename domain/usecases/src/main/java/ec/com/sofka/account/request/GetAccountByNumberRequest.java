@@ -4,10 +4,10 @@ import ec.com.sofka.generics.utils.Request;
 
 public class GetAccountByNumberRequest extends Request {
 
-    private final String accountNumber;
+    private String accountNumber;
 
-    public GetAccountByNumberRequest(String accountNumber) {
-        super(null);
+    public GetAccountByNumberRequest(final String aggregateId, String accountNumber) {
+        super(aggregateId);
         this.accountNumber = accountNumber;
     }
 

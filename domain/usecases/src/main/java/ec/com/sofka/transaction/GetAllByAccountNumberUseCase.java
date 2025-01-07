@@ -1,39 +1,65 @@
 package ec.com.sofka.transaction;
 
+import ec.com.sofka.aggregate.customer.Customer;
+import ec.com.sofka.aggregate.operation.Operation;
 import ec.com.sofka.exception.NotFoundException;
 import ec.com.sofka.gateway.AccountRepository;
+import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.gateway.TransactionRepository;
+import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;
 import ec.com.sofka.transaction.request.GetAllByAccountNumberRequest;
 import ec.com.sofka.transaction.responses.TransactionResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class GetAllByAccountNumberUseCase implements IUseCase<GetAllByAccountNumberRequest, TransactionResponse> {
 
-    private final AccountRepository accountRepository;
-    private final TransactionRepository transactionRepository;
+    private final IEventStore repository;
 
-    public GetAllByAccountNumberUseCase(AccountRepository accountRepository, TransactionRepository transactionRepository) {
-        this.accountRepository = accountRepository;
-        this.transactionRepository = transactionRepository;
+    public GetAllByAccountNumberUseCase(IEventStore repository) {
+        this.repository = repository;
     }
 
     @Override
     public Flux<TransactionResponse> execute(GetAllByAccountNumberRequest cmd) {
-        return accountRepository.findByAccountNumber(cmd.getAccountNumber())
-                .switchIfEmpty(Mono.error(new NotFoundException("Account not found")))
-                .flatMapMany(accountDTO -> {
-                    return transactionRepository.getAllByAccountId(accountDTO.getId())
-                            .map(transactionDTO -> new TransactionResponse(
-                                    transactionDTO.getCustomerId(),
-                                    transactionDTO.getAmount(),
-                                    transactionDTO.getFee(),
-                                    transactionDTO.getNetAmount(),
-                                    transactionDTO.getType(),
-                                    transactionDTO.getTimestamp(),
-                                    transactionDTO.getAccountId()
-                            ));
-                });
+        Flux<DomainEvent> eventsCustomer = repository.findAggregate(cmd.getCustomerId());
+
+        return Customer.from(cmd.getCustomerId(), eventsCustomer)
+                .flatMapMany(customer -> Mono.justOrEmpty(
+                                        customer.getAccounts().stream()
+                                                .filter(account -> account.getAccountNumber().getValue().equals(cmd.getAccountNumber()))
+                                                .findFirst()
+                                )
+                                .switchIfEmpty(Mono.error(new NotFoundException("Account not found")))
+                                .flatMapMany(account -> {
+                                    return repository.findAllAggregate("operation")
+                                            .collectList()
+                                            .flatMapMany(eventsOperation -> {
+                                                Map<String, DomainEvent> latestEvents = eventsOperation.stream()
+                                                        .collect(Collectors.toMap(
+                                                                DomainEvent::getAggregateRootId,
+                                                                event -> event,
+                                                                (existing, replacement) -> existing.getVersion() >= replacement.getVersion() ? existing : replacement
+                                                        ));
+
+                                                return Flux.fromIterable(latestEvents.values())
+                                                        .flatMap(event -> Operation.from(event.getAggregateRootId(), Flux.fromIterable(eventsOperation)));
+                                            })
+                                            .map(operation -> new TransactionResponse(
+                                                    operation.getId().getValue(),
+                                                    operation.getTransaction().getAmount().getValue(),
+                                                    operation.getTransaction().getFee().getValue(),
+                                                    operation.getTransaction().getNetAmount().getValue(),
+                                                    operation.getTransaction().getType().getValue(),
+                                                    operation.getTransaction().getTimestamp().getValue(),
+                                                    operation.getTransaction().getAccountId().getValue(),
+                                                    customer.getId().getValue()
+                                            ));
+                                })
+                );
     }
 }

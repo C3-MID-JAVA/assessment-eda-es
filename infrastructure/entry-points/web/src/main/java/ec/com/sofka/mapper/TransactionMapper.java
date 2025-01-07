@@ -8,15 +8,16 @@ import ec.com.sofka.transaction.responses.TransactionResponse;
 public class TransactionMapper {
     public static TransactionResponseDTO fromEntity(TransactionResponse transactionResponse) {
         return new TransactionResponseDTO(
-                transactionResponse.getCustomerId(),
-                transactionResponse.getAmount(),
+                transactionResponse.getOperationId(),
+                transactionResponse.getFee(),
                 transactionResponse.getNetAmount(),
                 transactionResponse.getType(),
-                transactionResponse.getTimestamp()
+                transactionResponse.getTimestamp(),
+                transactionResponse.getCustomerId()
         );
     }
 
     public static CreateTransactionRequest toEntity(TransactionRequestDTO transactionRequestDTO) {
-        return new CreateTransactionRequest(transactionRequestDTO.getAmount(), transactionRequestDTO.getType(), transactionRequestDTO.getAccountNumber());
+        return new CreateTransactionRequest(transactionRequestDTO.getAmount(), transactionRequestDTO.getType(), transactionRequestDTO.getAccountNumber(), transactionRequestDTO.getCustomerId());
     }
 }

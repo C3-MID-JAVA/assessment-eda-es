@@ -23,7 +23,7 @@ public class EventMongoConfig {
     @Bean(name = "eventsDatabaseFactory")
     public ReactiveMongoDatabaseFactory eventsDatabaseFactory() {
         MongoClient mongoClient = MongoClients.create(eventMongoUri);
-        return new SimpleReactiveMongoDatabaseFactory(mongoClient, "logs");
+        return new SimpleReactiveMongoDatabaseFactory(mongoClient, "event");
     }
 
     @Bean(name = "eventMongoTemplate")

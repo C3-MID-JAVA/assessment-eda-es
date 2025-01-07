@@ -14,9 +14,6 @@ public class UserEntity {
 
     private String documentId;
 
-    @Field(name = "aggregate_id")
-    private String customerId;
-
     public UserEntity() {
     }
 
@@ -53,9 +50,5 @@ public class UserEntity {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
     }
 }

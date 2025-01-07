@@ -27,20 +27,17 @@ public class TransactionEntity {
 
     private String accountId;
 
-    @Field(name = "aggregate_id")
-    private String customerId;
 
     public TransactionEntity() {
     }
 
-    public TransactionEntity(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId, String customerId) {
+    public TransactionEntity(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
         this.amount = amount;
         this.fee = fee;
         this.netAmount = netAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
-        this.customerId = customerId;
     }
 
     public TransactionEntity(String id, BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
@@ -107,13 +104,5 @@ public class TransactionEntity {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
     }
 }

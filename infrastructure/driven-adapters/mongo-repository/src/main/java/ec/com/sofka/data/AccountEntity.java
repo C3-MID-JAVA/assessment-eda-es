@@ -3,7 +3,6 @@ package ec.com.sofka.data;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
@@ -19,25 +18,20 @@ public class AccountEntity {
 
     private String userId;
 
-    @Field(name = "aggregate_id")
-    private String customerId;
-
     public AccountEntity() {
     }
 
-    public AccountEntity(String accountNumber, BigDecimal balance, String userId, String customerId) {
+    public AccountEntity(String accountNumber, BigDecimal balance, String userId) {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.userId = userId;
-        this.customerId = customerId;
     }
 
-    public AccountEntity(String id, String accountNumber, BigDecimal balance, String userId, String customerId) {
+    public AccountEntity(String id, String accountNumber, BigDecimal balance, String userId) {
         this.id = id;
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.userId = userId;
-        this.customerId = customerId;
     }
 
     public String getId() {
@@ -70,13 +64,5 @@ public class AccountEntity {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
     }
 }

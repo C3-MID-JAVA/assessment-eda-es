@@ -8,13 +8,15 @@ import java.math.BigDecimal;
 public class CreateTransactionRequest extends Request {
     private final BigDecimal amount;
     private final TransactionType type;
-    private final String accountId;
+    private final String customerId;
+    private final String accountNumber;
 
-    public CreateTransactionRequest(BigDecimal amount, TransactionType type, String accountId) {
+    public CreateTransactionRequest(BigDecimal amount, TransactionType type,String accountNumber, String customerId) {
         super(null);
         this.amount = amount;
         this.type = type;
-        this.accountId = accountId;
+        this.customerId = customerId;
+        this.accountNumber = accountNumber;
     }
 
     public BigDecimal getAmount() {
@@ -25,7 +27,11 @@ public class CreateTransactionRequest extends Request {
         return type;
     }
 
-    public String getAccountId() {
-        return accountId;
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
     }
 }

@@ -7,7 +7,7 @@ import ec.com.sofka.user.responses.UserResponse;
 
 public class UserMapper {
     public static UserResponseDTO fromEntity(UserResponse userResponse) {
-        return new UserResponseDTO(userResponse.getId(), userResponse.getName(), userResponse.getDocumentId(), userResponse.getCustomerId());
+        return new UserResponseDTO(userResponse.getCustomerId(), userResponse.getName(), userResponse.getDocumentId());
     }
 
     public static CreateUserRequest toEntity(UserRequestDTO userRequestDTO) {

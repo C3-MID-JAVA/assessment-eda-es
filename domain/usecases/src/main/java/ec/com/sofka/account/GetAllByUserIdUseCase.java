@@ -2,27 +2,32 @@ package ec.com.sofka.account;
 
 import ec.com.sofka.account.request.GetAllByUserIdRequest;
 import ec.com.sofka.account.responses.AccountResponse;
+import ec.com.sofka.aggregate.customer.Customer;
 import ec.com.sofka.gateway.AccountRepository;
+import ec.com.sofka.gateway.IEventStore;
+import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;
 import reactor.core.publisher.Flux;
 
 public class GetAllByUserIdUseCase implements IUseCase<GetAllByUserIdRequest, AccountResponse> {
+    private final IEventStore repository;
 
-    private final AccountRepository accountRepository;
-
-    public GetAllByUserIdUseCase(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public GetAllByUserIdUseCase(IEventStore repository) {
+        this.repository = repository;
     }
 
     @Override
     public Flux<AccountResponse> execute(GetAllByUserIdRequest request) {
-        return accountRepository.getAllByUserId(request.getUserId())
-                .map(accountDTO -> new AccountResponse(
-                        accountDTO.getCustomerId(),
-                        accountDTO.getAccountNumber(),
-                        accountDTO.getBalance(),
-                        accountDTO.getUserId()
-                ));
+        Flux<DomainEvent> events = repository.findAggregate(request.getAggregateId());
+        return Customer.from(request.getAggregateId(), events)
+                .flatMapMany(customer ->
+                        Flux.fromIterable(customer.getAccounts())
+                                .map(account -> new AccountResponse(
+                                        customer.getId().getValue(),
+                                        account.getAccountNumber().getValue(),
+                                        account.getBalance().getValue(),
+                                        account.getUserId().getValue()
+                                ))
+                );
     }
-
 }

@@ -9,8 +9,7 @@ public class AccountMapperEntity {
                 accountDTO.getId(),
                 accountDTO.getAccountNumber(),
                 accountDTO.getBalance(),
-                accountDTO.getUserId(),
-                accountDTO.getCustomerId()
+                accountDTO.getUserId()
         );
     }
 
@@ -19,8 +18,7 @@ public class AccountMapperEntity {
                 accountEntity.getId(),
                 accountEntity.getAccountNumber(),
                 accountEntity.getBalance(),
-                accountEntity.getUserId(),
-                accountEntity.getCustomerId()
+                accountEntity.getUserId()
         );
     }
 }

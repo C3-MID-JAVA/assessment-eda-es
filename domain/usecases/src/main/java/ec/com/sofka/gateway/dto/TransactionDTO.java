@@ -13,19 +13,17 @@ public class TransactionDTO {
     private TransactionType type;
     private LocalDateTime timestamp;
     private String accountId;
-    private final String customerId;
 
-    public TransactionDTO(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId, String customerId) {
+    public TransactionDTO(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
         this.amount = amount;
         this.fee = fee;
         this.netAmount = netAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
-        this.customerId = customerId;
     }
 
-    public TransactionDTO(String id, BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId, String customerId) {
+    public TransactionDTO(String id, BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
         this.id = id;
         this.amount = amount;
         this.fee = fee;
@@ -33,7 +31,6 @@ public class TransactionDTO {
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
-        this.customerId = customerId;
     }
 
     public String getId() {
@@ -62,9 +59,5 @@ public class TransactionDTO {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
-    }
-
-    public String getCustomerId() {
-        return customerId;
     }
 }

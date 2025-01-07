@@ -4,7 +4,6 @@ import ec.com.sofka.dto.UserRequestDTO;
 import ec.com.sofka.mapper.UserMapper;
 import ec.com.sofka.user.CreateUserUseCase;
 import ec.com.sofka.user.GetAllUserUseCase;
-import ec.com.sofka.user.request.EmptyRequest;
 import ec.com.sofka.validator.RequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +26,7 @@ public class UserHandler {
     }
 
     public Mono<ServerResponse> getAll(ServerRequest request) {
-        return getAllUseCase.execute(EmptyRequest.INSTANCE)
+        return getAllUseCase.execute()
                 .map(UserMapper::fromEntity)
                 .collectList()
                 .flatMap(userResponseDTOs ->
