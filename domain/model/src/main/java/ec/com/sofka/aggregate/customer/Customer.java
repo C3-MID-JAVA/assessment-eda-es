@@ -2,9 +2,9 @@ package ec.com.sofka.aggregate.customer;
 
 import ec.com.sofka.account.Account;
 import ec.com.sofka.account.values.AccountId;
-import ec.com.sofka.aggregate.events.AccountBalanceUpdated;
-import ec.com.sofka.aggregate.events.AccountCreated;
-import ec.com.sofka.aggregate.events.UserCreated;
+import ec.com.sofka.aggregate.customer.events.AccountBalanceUpdated;
+import ec.com.sofka.aggregate.customer.events.AccountCreated;
+import ec.com.sofka.aggregate.customer.events.UserCreated;
 import ec.com.sofka.aggregate.customer.values.CustomerId;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;

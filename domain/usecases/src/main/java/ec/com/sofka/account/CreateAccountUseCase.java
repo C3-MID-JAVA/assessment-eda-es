@@ -3,6 +3,7 @@ package ec.com.sofka.account;
 
 import ec.com.sofka.aggregate.customer.Customer;
 import ec.com.sofka.account.request.CreateAccountRequest;
+import ec.com.sofka.exception.NotFoundException;
 import ec.com.sofka.gateway.AccountRepository;
 import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.gateway.dto.AccountDTO;
@@ -25,10 +26,13 @@ public class CreateAccountUseCase implements IUseCase<CreateAccountRequest, Acco
     }
 
     public Mono<AccountResponse> execute(CreateAccountRequest cmd) {
-        Flux<DomainEvent> events = repository.findAggregate(cmd.getAggregateId());
+        Flux<DomainEvent> events = repository.findAggregate(cmd.getAggregateId(), "customer");
 
         return Customer.from(cmd.getAggregateId(), events)
                 .flatMap(customer -> {
+                    if (customer.getUser() == null) {
+                        return Mono.error(new NotFoundException("User not found"));
+                    }
 
                     String generatedAccountNumber = UUID.randomUUID().toString().substring(0, 8);
 

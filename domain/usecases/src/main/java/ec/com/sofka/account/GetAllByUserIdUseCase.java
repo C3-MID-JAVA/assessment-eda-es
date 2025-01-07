@@ -18,7 +18,7 @@ public class GetAllByUserIdUseCase implements IUseCase<GetAllByUserIdRequest, Ac
 
     @Override
     public Flux<AccountResponse> execute(GetAllByUserIdRequest request) {
-        Flux<DomainEvent> events = repository.findAggregate(request.getAggregateId());
+        Flux<DomainEvent> events = repository.findAggregate(request.getAggregateId(), "customer");
         return Customer.from(request.getAggregateId(), events)
                 .flatMapMany(customer ->
                         Flux.fromIterable(customer.getAccounts())

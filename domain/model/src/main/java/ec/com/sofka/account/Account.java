@@ -31,5 +31,4 @@ public class Account extends Entity<AccountId> {
         return userId;
     }
 
-
 }

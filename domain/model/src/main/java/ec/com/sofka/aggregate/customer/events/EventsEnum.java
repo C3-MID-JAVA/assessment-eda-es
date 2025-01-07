@@ -1,4 +1,4 @@
-package ec.com.sofka.aggregate.events;
+package ec.com.sofka.aggregate.customer.events;
 
 public enum EventsEnum {
     ACCOUNT_CREATED,

@@ -26,7 +26,7 @@ public class GetAllByAccountNumberUseCase implements IUseCase<GetAllByAccountNum
 
     @Override
     public Flux<TransactionResponse> execute(GetAllByAccountNumberRequest cmd) {
-        Flux<DomainEvent> eventsCustomer = repository.findAggregate(cmd.getCustomerId());
+        Flux<DomainEvent> eventsCustomer = repository.findAggregate(cmd.getCustomerId(), "customer");
 
         return Customer.from(cmd.getCustomerId(), eventsCustomer)
                 .flatMapMany(customer -> Mono.justOrEmpty(

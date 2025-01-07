@@ -91,11 +91,19 @@ public class EventEntity {
         this.version = version;
     }
 
+    public String getAggregateRootName() {
+        return aggregateRootName;
+    }
+
+    public void setAggregateRootName(String aggregateRootName) {
+        this.aggregateRootName = aggregateRootName;
+    }
+
     public static String wrapEvent(DomainEvent domainEvent, JSONMap eventSerializer) {
         return eventSerializer.writeToJson(domainEvent);
     }
 
-    public DomainEvent deserializeEvent(JSONMap eventSerializer) {
+    public DomainEvent deserializeEvent(JSONMap eventSerializer, String aggregate) {
         try {
 
             String className = Arrays.stream(this.getEventType().toLowerCase().split("_"))
@@ -103,7 +111,7 @@ public class EventEntity {
                     .collect(Collectors.joining());
 
             return (DomainEvent) eventSerializer
-                    .readFromJson(this.getEventData(), Class.forName("ec.com.sofka.aggregate.events." + className));
+                    .readFromJson(this.getEventData(), Class.forName("ec.com.sofka.aggregate." + aggregate + ".events." + className));
         } catch (ClassNotFoundException e) {
             return null;
         }

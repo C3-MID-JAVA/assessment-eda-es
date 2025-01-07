@@ -1,4 +1,4 @@
-package ec.com.sofka.aggregate.events;
+package ec.com.sofka.aggregate.customer.events;
 
 import ec.com.sofka.generics.domain.DomainEvent;
 

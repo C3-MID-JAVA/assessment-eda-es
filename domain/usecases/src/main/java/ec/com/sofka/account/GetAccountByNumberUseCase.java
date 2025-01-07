@@ -22,7 +22,7 @@ public class GetAccountByNumberUseCase implements IUseCase<GetAccountByNumberReq
 
     @Override
     public Mono<AccountResponse> execute(GetAccountByNumberRequest cmd) {
-        Flux<DomainEvent> events = repository.findAggregate(cmd.getAggregateId());
+        Flux<DomainEvent> events = repository.findAggregate(cmd.getAggregateId(), "customer");
 
         return Customer.from(cmd.getAggregateId(), events)
                 .flatMap(customer -> Mono.justOrEmpty(

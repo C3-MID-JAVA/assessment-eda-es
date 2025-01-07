@@ -1,6 +1,6 @@
 package ec.com.sofka.aggregate.operation;
 
-import ec.com.sofka.aggregate.events.TransactionCreated;
+import ec.com.sofka.aggregate.operation.events.TransactionCreated;
 import ec.com.sofka.aggregate.operation.values.OperationId;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;
