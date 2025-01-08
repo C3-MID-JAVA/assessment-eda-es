@@ -1,5 +1,6 @@
 package ec.com.sofka.mapper;
 
+import ec.com.sofka.aggregate.values.objects.Amount;
 import ec.com.sofka.gateway.dto.AccountDTO;
 import ec.com.sofka.aggregate.entities.account.Account;
 import ec.com.sofka.aggregate.entities.account.values.AccountId;
@@ -18,7 +19,7 @@ public class AccountMapper {
         return new Account(
                 AccountId.of(account.getId()),
                 AccountNumber.of(account.getAccountNumber()),
-                account.getBalance(),
+                Amount.of(account.getBalance()),
                 account.getStatus(),
                 UserMapper.mapToModelFromDTO(account.getUser()));
     }
@@ -30,7 +31,7 @@ public class AccountMapper {
 
         return new AccountResponse(
                 account.getAccountNumber().getValue(),
-                account.getBalance(),
+                account.getBalance().getValue(),
                 account.getStatus(),
                 UserMapper.mapToResponseFromModel(account.getUser()));
     }
@@ -55,7 +56,7 @@ public class AccountMapper {
         return new AccountDTO(
                 account.getId().getValue(),
                 account.getAccountNumber().getValue(),
-                account.getBalance(),
+                account.getBalance().getValue(),
                 account.getStatus(),
                 account.getUser() != null ? UserMapper.mapToDTOFromModel(account.getUser()) : null);
     }

@@ -37,19 +37,5 @@ public class TransactionMapper {
                 TransactionTypeMapper.mapToResponseFromDTO(transaction.getTransactionType()));
     }
 
-    public static TransactionDTO mapToDTOFromRequest(TransactionRequest transaction) {
-        if (transaction == null) {
-            return null;
-        }
-
-        return new TransactionDTO(
-                transaction.getAccountNumber(),
-                transaction.getDetails(),
-                transaction.getAmount(),
-                transaction.getProcessingDate(),
-                null,
-                null
-        );
-    }
 
 }

@@ -1,9 +1,9 @@
 package ec.com.sofka.aggregate.entities.transaction;
 
+import ec.com.sofka.aggregate.values.objects.Amount;
 import ec.com.sofka.generics.shared.Entity;
 import ec.com.sofka.aggregate.entities.account.Account;
 import ec.com.sofka.aggregate.entities.transaction.values.TransactionId;
-import ec.com.sofka.aggregate.entities.transaction.values.objects.Amount;
 import ec.com.sofka.aggregate.entities.transaction.values.objects.ProcessingDate;
 import ec.com.sofka.aggregate.entities.transaction.values.objects.TransactionAccount;
 import ec.com.sofka.aggregate.entities.transactionType.TransactionType;
@@ -68,4 +68,5 @@ public class Transaction extends Entity<TransactionId> {
     public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType;
     }
+
 }

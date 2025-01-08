@@ -2,6 +2,8 @@ package ec.com.sofka.aggregate.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ec.com.sofka.aggregate.entities.user.values.objects.Email;
+import ec.com.sofka.aggregate.entities.user.values.objects.Password;
 import ec.com.sofka.generics.shared.Entity;
 import ec.com.sofka.aggregate.entities.user.values.UserId;
 import ec.com.sofka.aggregate.entities.user.values.objects.IdentityCard;
@@ -15,9 +17,9 @@ public class User extends Entity<UserId> {
 
     private final IdentityCard identityCard;
 
-    private String email;
+    private Email email;
 
-    private String password;
+    private Password password;
 
     private StatusEnum status;
 
@@ -27,8 +29,8 @@ public class User extends Entity<UserId> {
             @JsonProperty("firstName") String firstName,
             @JsonProperty("lastName") String lastName,
             @JsonProperty("identityCard") IdentityCard identityCard,
-            @JsonProperty("email") String email,
-            @JsonProperty("password") String password,
+            @JsonProperty("email") Email email,
+            @JsonProperty("password") Password password,
             @JsonProperty("status") StatusEnum status
     ) {
         super(userId);
@@ -60,19 +62,19 @@ public class User extends Entity<UserId> {
         return identityCard;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(Password password) {
         this.password = password;
     }
 

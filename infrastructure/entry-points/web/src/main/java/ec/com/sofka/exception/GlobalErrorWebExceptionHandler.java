@@ -28,7 +28,7 @@ public class GlobalErrorWebExceptionHandler implements ErrorWebExceptionHandler 
             EmptyCollectionException.class, ex -> new ErrorDetails(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new Date()),
             ConflictException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date()),
             TransactionRejectedException.class, ex -> new ErrorDetails(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), new Date()),
-            RecordNotFoundException.class, ex -> new ErrorDetails(HttpStatus.NO_CONTENT.value(), ex.getMessage(), new Date()),
+            RecordNotFoundException.class, ex -> new ErrorDetails(HttpStatus.NOT_FOUND.value(), ex.getMessage(), new Date()),
             RequestValidationException.class, ex -> {
                 List<String> errors = ((RequestValidationException) ex).getErrors();
                 return new ErrorDetails(HttpStatus.UNPROCESSABLE_ENTITY.value(), String.join(", ", errors), new Date());

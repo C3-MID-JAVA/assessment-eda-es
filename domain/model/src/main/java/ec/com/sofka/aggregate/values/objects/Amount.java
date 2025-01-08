@@ -1,4 +1,4 @@
-package ec.com.sofka.aggregate.entities.transaction.values.objects;
+package ec.com.sofka.aggregate.values.objects;
 
 import ec.com.sofka.generics.interfaces.IValueObject;
 
@@ -7,16 +7,19 @@ import java.math.BigDecimal;
 public record Amount(BigDecimal value) implements IValueObject<BigDecimal> {
 
     public Amount(final BigDecimal value) {
-        this.value = validate(value);
+        this.value = isValid(value);
     }
 
     public static Amount of(final BigDecimal value) {
         return new Amount(value);
     }
 
-    private BigDecimal validate(final BigDecimal value) {
-        if (value == null || value.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("The quantity must be positive and non-zero.");
+    private BigDecimal isValid(final BigDecimal value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Amount cannot be null.");
+        }
+        if (value.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative.");
         }
         return value;
     }
@@ -25,5 +28,4 @@ public record Amount(BigDecimal value) implements IValueObject<BigDecimal> {
     public BigDecimal getValue() {
         return this.value;
     }
-
 }

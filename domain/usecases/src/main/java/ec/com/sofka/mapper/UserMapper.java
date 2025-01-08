@@ -1,5 +1,7 @@
 package ec.com.sofka.mapper;
 
+import ec.com.sofka.aggregate.entities.user.values.objects.Email;
+import ec.com.sofka.aggregate.entities.user.values.objects.Password;
 import ec.com.sofka.gateway.dto.UserDTO;
 import ec.com.sofka.aggregate.entities.user.User;
 import ec.com.sofka.aggregate.entities.user.values.UserId;
@@ -17,8 +19,8 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 IdentityCard.of(user.getIdentityCard()),
-                user.getEmail(),
-                user.getPassword(),
+                Email.of(user.getEmail()),
+                Password.of(user.getPassword()),
                 user.getStatus());
     }
 
@@ -31,7 +33,7 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getIdentityCard().getValue(),
-                user.getEmail(),
+                user.getEmail().getValue(),
                 user.getStatus()
         );
     }
@@ -60,24 +62,8 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getIdentityCard().getValue(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getStatus()
-        );
-    }
-
-    public static User mapToModelFromResponse(UserResponse user) {
-        if (user == null) {
-            return null;
-        }
-
-        return new User(
-                null,
-                user.getFirstName(),
-                user.getLastName(),
-                IdentityCard.of(user.getIdentityCard()),
-                user.getEmail(),
-                null,
+                user.getEmail().getValue(),
+                user.getPassword().getValue(),
                 user.getStatus()
         );
     }

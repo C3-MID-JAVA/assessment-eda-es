@@ -1,6 +1,8 @@
 package ec.com.sofka.aggregate.handlers;
 
 import ec.com.sofka.aggregate.AccountAggregate;
+import ec.com.sofka.aggregate.entities.user.values.objects.Email;
+import ec.com.sofka.aggregate.entities.user.values.objects.Password;
 import ec.com.sofka.aggregate.events.UserCreated;
 import ec.com.sofka.generics.domain.DomainActionsContainer;
 import ec.com.sofka.aggregate.entities.user.User;
@@ -16,8 +18,8 @@ public class UserHandler extends DomainActionsContainer {
                     event.getFirstName(),
                     event.getLastName(),
                     IdentityCard.of(event.getIdentityCard()),
-                    event.getEmail(),
-                    event.getPassword(),
+                    Email.of(event.getEmail()),
+                    Password.of(event.getPassword()),
                     event.getStatus());
 
             accountAggregate.setUser(user);

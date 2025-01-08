@@ -2,19 +2,18 @@ package ec.com.sofka.aggregate.entities.account;
 
 import ec.com.sofka.aggregate.entities.account.values.AccountId;
 import ec.com.sofka.aggregate.entities.account.values.objects.AccountNumber;
+import ec.com.sofka.aggregate.values.objects.Amount;
 import ec.com.sofka.generics.shared.Entity;
 import ec.com.sofka.aggregate.entities.user.User;
 import ec.com.sofka.utils.enums.StatusEnum;
 
-import java.math.BigDecimal;
-
 public class Account extends Entity<AccountId> {
     private final AccountNumber accountNumber;
-    private BigDecimal balance;
+    private Amount balance;
     private StatusEnum status;
     private User user;
 
-    public Account(AccountId id, AccountNumber accountNumber, BigDecimal balance, StatusEnum status, User user ) {
+    public Account(AccountId id, AccountNumber accountNumber, Amount balance, StatusEnum status, User user ) {
         super(id);
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -26,11 +25,11 @@ public class Account extends Entity<AccountId> {
         return accountNumber;
     }
 
-    public BigDecimal getBalance() {
+    public Amount getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(Amount balance) {
         this.balance = balance;
     }
 

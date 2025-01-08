@@ -1,5 +1,6 @@
 package ec.com.sofka.mapper;
 
+import ec.com.sofka.aggregate.values.objects.Amount;
 import ec.com.sofka.gateway.dto.TransactionTypeDTO;
 import ec.com.sofka.aggregate.entities.transactionType.TransactionType;
 import ec.com.sofka.aggregate.entities.transactionType.values.TransactionTypeId;
@@ -17,7 +18,7 @@ public class TransactionTypeMapper {
                 TransactionTypeId.of(transactionType.getId()),
                 transactionType.getType(),
                 transactionType.getDescription(),
-                transactionType.getValue(),
+                Amount.of(transactionType.getValue()),
                 transactionType.getDiscount(),
                 transactionType.getDiscount(),
                 transactionType.getStatus()
@@ -31,7 +32,7 @@ public class TransactionTypeMapper {
         return new TransactionTypeResponse(
                 transactionType.getType(),
                 transactionType.getDescription(),
-                transactionType.getValue(),
+                transactionType.getValue().getValue(),
                 transactionType.getDiscount(),
                 transactionType.getDiscount(),
                 transactionType.getStatus()
@@ -60,7 +61,7 @@ public class TransactionTypeMapper {
                 transactionType.getId().getValue(),
                 transactionType.getType(),
                 transactionType.getDescription(),
-                transactionType.getValue(),
+                transactionType.getValue().getValue(),
                 transactionType.getDiscount(),
                 transactionType.getDiscount(),
                 transactionType.getStatus()

@@ -1,5 +1,6 @@
 package ec.com.sofka.aggregate.entities.transactionType;
 
+import ec.com.sofka.aggregate.values.objects.Amount;
 import ec.com.sofka.generics.shared.Entity;
 import ec.com.sofka.aggregate.entities.transactionType.values.TransactionTypeId;
 import ec.com.sofka.utils.enums.StatusEnum;
@@ -11,7 +12,7 @@ public class TransactionType extends Entity<TransactionTypeId> {
 
     private String description;
 
-    private BigDecimal value;
+    private Amount value;
 
     private Boolean transactionCost;
 
@@ -19,7 +20,7 @@ public class TransactionType extends Entity<TransactionTypeId> {
 
     private StatusEnum status;
 
-    public TransactionType(TransactionTypeId transactionTypeId, String type, String description, BigDecimal value, Boolean transactionCost, Boolean discount, StatusEnum status) {
+    public TransactionType(TransactionTypeId transactionTypeId, String type, String description, Amount value, Boolean transactionCost, Boolean discount, StatusEnum status) {
         super(transactionTypeId);
         this.type = type;
         this.description = description;
@@ -45,11 +46,11 @@ public class TransactionType extends Entity<TransactionTypeId> {
         this.description = description;
     }
 
-    public BigDecimal getValue() {
+    public Amount getValue() {
         return value;
     }
 
-    public void setValue(BigDecimal value) {
+    public void setValue(Amount value) {
         this.value = value;
     }
 
