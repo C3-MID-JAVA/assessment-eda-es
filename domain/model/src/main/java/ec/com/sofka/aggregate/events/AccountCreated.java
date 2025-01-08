@@ -1,39 +1,35 @@
 package ec.com.sofka.aggregate.events;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ec.com.sofka.generics.domain.DomainEvent;
+import ec.com.sofka.aggregate.entities.user.User;
+import ec.com.sofka.utils.enums.EventsEnum;
+import ec.com.sofka.utils.enums.StatusEnum;
 
 import java.math.BigDecimal;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountCreated extends DomainEvent {
+    @JsonProperty(value = "accountId")
     private String accountId;
     private String accountNumber;
-    private BigDecimal accountBalance;
-    private String name;
-    private String status;
+    private BigDecimal balance;
+    private StatusEnum status;
+    private User user;
 
-
-    public AccountCreated(String accountId, String accountNumber, BigDecimal accountBalance, String name, String status) {
+    public AccountCreated(String accountId, String accountNumber, BigDecimal balance, StatusEnum status, User user) {
         super(EventsEnum.ACCOUNT_CREATED.name());
         this.accountId = accountId;
         this.accountNumber = accountNumber;
-        this.accountBalance = accountBalance;
-        this.name = name;
+        this.balance = balance;
         this.status = status;
-    }
-
-    public AccountCreated(String accountNumber, BigDecimal accountBalance, String name, String status) {
-        super(EventsEnum.ACCOUNT_CREATED.name());
-        this.accountNumber = accountNumber;
-        this.accountBalance = accountBalance;
-        this.name = name;
-        this.status = status;
+        this.user = user;
     }
 
     public AccountCreated() {
         super(EventsEnum.ACCOUNT_CREATED.name());
-
     }
-
 
     public String getAccountId() {
         return accountId;
@@ -43,17 +39,16 @@ public class AccountCreated extends DomainEvent {
         return accountNumber;
     }
 
-    public BigDecimal getAccountBalance() {
-        return accountBalance;
+    public BigDecimal getBalance() {
+        return balance;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
+    public User getUser() {
+        return user;
+    }
 
 }
