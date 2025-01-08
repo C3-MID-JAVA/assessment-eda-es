@@ -1,7 +1,6 @@
 package ec.com.sofka.appservice.transactions;
 
 import ec.com.sofka.appservice.data.request.CreateTransactionRequest;
-import ec.com.sofka.appservice.data.response.TransactionResponse;
 import ec.com.sofka.transaction.Transaction;
 import ec.com.sofka.appservice.gateway.IBusMessage;
 import ec.com.sofka.appservice.transactions.transactionprocess.ProcessTransactionUseCase;

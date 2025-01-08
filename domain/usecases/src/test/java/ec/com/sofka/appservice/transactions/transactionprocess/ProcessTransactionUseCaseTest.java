@@ -3,7 +3,6 @@ package ec.com.sofka.appservice.transactions.transactionprocess;
 import ec.com.sofka.*;
 import ec.com.sofka.account.Account;
 import ec.com.sofka.appservice.accounts.GetAccountByAccountNumberUseCase;
-import ec.com.sofka.appservice.accounts.SaveAccountUseCase;
 import ec.com.sofka.enums.OperationType;
 import ec.com.sofka.enums.TransactionType;
 import ec.com.sofka.strategy.TransaccionStrategy;

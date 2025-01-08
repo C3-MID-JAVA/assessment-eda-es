@@ -1,5 +1,7 @@
 package ec.com.sofka.mapper;
 
+import ec.com.sofka.appservice.data.response.AccountResponse;
+import ec.com.sofka.appservice.data.response.TransactionResponse;
 import ec.com.sofka.transaction.Transaction;
 import ec.com.sofka.data.TransactionRequestDTO;
 import ec.com.sofka.data.TransactionResponseDTO;
@@ -10,23 +12,25 @@ import java.math.BigDecimal;
 @Component
 public class TransactionDTOMapper {
 
-
-    public static Transaction  transactionRequestToTransaction(TransactionRequestDTO transaction) {
-        return new Transaction(
-                null,
-                transaction.getAmount(),
-                null,
-                null,
-                transaction.getTransactionType(),
-                transaction.getAccountNumber()
+    public static TransactionResponseDTO toTransactionResponseDTO(TransactionResponse transactionResponse) {
+        return new TransactionResponseDTO(
+                transactionResponse.getTransactionId(),
+                transactionResponse.getAccountId(),
+                transactionResponse.getTransactionCost(),
+                transactionResponse.getAmount(),
+                transactionResponse.getTransactionDate(),
+                transactionResponse.getTransactionType()
         );
     }
 
-    public static TransactionResponseDTO transactionToTransactionResponse(Transaction transaction, BigDecimal balance, String accountNumber) {
+    public static TransactionResponseDTO toTransactionResponseDTOWithDefaults(TransactionResponse transactionResponse) {
         return new TransactionResponseDTO(
-                transaction,
-                balance,
-                accountNumber
+                transactionResponse.getTransactionId(),
+                transactionResponse.getAccountId(),
+                transactionResponse.getTransactionCost(),
+                transactionResponse.getAmount(),
+                transactionResponse.getTransactionDate(),
+                transactionResponse.getTransactionType()
         );
     }
 

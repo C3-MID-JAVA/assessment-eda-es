@@ -7,64 +7,45 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class TransactionResponseDTO {
-    private String id;
+    private String transactionId;
 
-    private String accountNumber;
-
-    private TransactionType transactionType;
-
-    private BigDecimal amount;
+    private String accountId;
 
     private BigDecimal transactionCost;
 
-    private BigDecimal newBalance;
-
+    private BigDecimal amount;
     private LocalDateTime date;
 
-    public TransactionResponseDTO(Transaction transaction, BigDecimal balance, String accountNumber) {
-        this.id = transaction.getId();
-        this.transactionType = transaction.getType();
-        this.amount = transaction.getAmount();
-        this.transactionCost = transaction.getTransactionCost();
-        this.date = transaction.getDate();
-        this.newBalance = balance;
-        this.accountNumber = accountNumber;
+    private TransactionType transactionType;
+
+
+    public TransactionResponseDTO(String transactionId, String accountId, BigDecimal transactionCost, BigDecimal amount, LocalDateTime date, TransactionType transactionType) {
+        this.transactionId = transactionId;
+        this.accountId = accountId;
+        this.transactionCost = transactionCost;
+        this.amount = amount;
+        this.date = date;
+        this.transactionType = transactionType;
     }
 
     public TransactionResponseDTO(){
 
     }
 
-    public String getId() {
-        return id;
+    public String getTransactionId() {
+        return transactionId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public BigDecimal getTransactionCost() {
@@ -75,12 +56,12 @@ public class TransactionResponseDTO {
         this.transactionCost = transactionCost;
     }
 
-    public BigDecimal getNewBalance() {
-        return newBalance;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setNewBalance(BigDecimal newBalance) {
-        this.newBalance = newBalance;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDateTime getDate() {
@@ -89,5 +70,13 @@ public class TransactionResponseDTO {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 }

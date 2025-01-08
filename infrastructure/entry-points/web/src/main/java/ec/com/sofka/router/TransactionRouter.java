@@ -1,10 +1,7 @@
 package ec.com.sofka.router;
 
 import ec.com.sofka.ErrorResponse;
-import ec.com.sofka.data.AccountRequestDTO;
-import ec.com.sofka.data.AccountResponseDTO;
-import ec.com.sofka.data.TransactionRequestDTO;
-import ec.com.sofka.data.TransactionResponseDTO;
+import ec.com.sofka.data.*;
 import ec.com.sofka.globalexceptions.GlobalErrorHandler;
 import ec.com.sofka.handler.AccountHandler;
 import ec.com.sofka.handler.TransactionHandler;
@@ -47,34 +44,34 @@ public class TransactionRouter {
         this.validationService = validationService;
         this.globalErrorHandler = globalErrorHandler;
     }
-/*
+
 
     @Bean
     @RouterOperations({
             @RouterOperation(
-                    path = "/transactions/{transactionId}",
+                    path = "/transactions/transactionId",
                     operation = @Operation(
                             tags = {"Transactions"},
-                            operationId = "getTransactionById",
-                            summary = "Get transaction by ID",
-                            description = "Fetches the transaction details associated with the given transaction ID.",
-                            parameters = {
-                                    @Parameter(
-                                            name = "transactionId",
-                                            description = "The transaction ID to retrieve transaction details",
-                                            required = true,
-                                            in = ParameterIn.PATH
+                            operationId = "createDeposit",
+                            summary = "Create a deposit transaction",
+                            description = "Creates a new deposit transaction for a user.",
+                            requestBody = @RequestBody(
+                                    description = "Deposit transaction details",
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = AccountReqByIdDTO.class)
                                     )
-                            },
+                            ),
                             responses = {
                                     @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Successfully retrieved the transaction details",
+                                            responseCode = "201",
+                                            description = "Deposit successfully created",
                                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = TransactionResponseDTO.class))
                                     ),
                                     @ApiResponse(
-                                            responseCode = "404",
-                                            description = "Transaction not found.",
+                                            responseCode = "400",
+                                            description = "Bad request, validation error or missing required fields",
                                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                                     )
                             }
@@ -157,14 +154,14 @@ public class TransactionRouter {
     })
     public RouterFunction<ServerResponse> transactionRoutes() {
         return RouterFunctions
-                .route(POST("/transactions/deposit").and(accept(MediaType.APPLICATION_JSON)), this::createDeposit)
-                .andRoute(POST("/transactions/withdrawal").and(accept(MediaType.APPLICATION_JSON)), this::createWithDrawal)
-                .andRoute(GET("/transactions/{transactionId}"), this::getTransactionById)
+                //.route(POST("/transactions/deposit").and(accept(MediaType.APPLICATION_JSON)), this::createDeposit)
+                //.andRoute(POST("/transactions/withdrawal").and(accept(MediaType.APPLICATION_JSON)), this::createWithDrawal)
+                .route(POST("/transactions/transactionId").and(accept(MediaType.APPLICATION_JSON)), this::getTransactionById)
                 .andRoute(GET("/transactions"), this::getAllTransactions);
     }
 
 
-
+/*
     public Mono<ServerResponse> createWithDrawal(ServerRequest request) {
         return request.bodyToMono(TransactionRequestDTO.class)
                 .flatMap(dto -> validationService.validate(dto, TransactionRequestDTO.class))
@@ -185,15 +182,18 @@ public class TransactionRouter {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(transactionResponseDTO))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }
+    }*/
+
 
     public Mono<ServerResponse> getTransactionById(ServerRequest request) {
-        String transactionId = request.pathVariable("transactionId");
-        return handler.getTransactionById(transactionId)
-                .flatMap(transactionResponseDTO -> ServerResponse
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                .doOnNext(dto -> {
+                })
+                .flatMap(handler::getTransactionById)
+                .flatMap(accountResponseDTO -> ServerResponse
                         .status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(transactionResponseDTO))
+                        .bodyValue(accountResponseDTO))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
 
@@ -206,6 +206,6 @@ public class TransactionRouter {
                         .bodyValue(transactions))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
-*/
+
 
 }

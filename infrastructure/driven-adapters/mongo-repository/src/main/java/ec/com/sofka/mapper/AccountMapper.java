@@ -6,7 +6,7 @@ import ec.com.sofka.data.AccountEntity;
 public class AccountMapper {
     public static AccountEntity DtoToEntity(AccountDTO accountDTO) {
         return new AccountEntity(
-                accountDTO.getId(),
+                accountDTO.getAccountId(),
                 accountDTO.getName(),
                 accountDTO.getAccountNumber(),
                 accountDTO.getBalance(),

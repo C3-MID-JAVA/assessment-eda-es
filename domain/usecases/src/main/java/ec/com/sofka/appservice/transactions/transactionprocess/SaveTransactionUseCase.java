@@ -1,5 +1,6 @@
 package ec.com.sofka.appservice.transactions.transactionprocess;
 
+import ec.com.sofka.appservice.data.request.CreateTransactionRequest;
 import ec.com.sofka.transaction.Transaction;
 import ec.com.sofka.appservice.gateway.ITransactionRepository;
 import ec.com.sofka.transaction.values.objects.TransactionDate;
@@ -15,15 +16,14 @@ public class SaveTransactionUseCase {
         this.repository = repository;
     }
 
-    public Mono<Transaction> apply(Transaction transaction) {
+    public Mono<Transaction> apply(CreateTransactionRequest  transaction) {
         TransactionDate transactionDate = TransactionDate.of(LocalDateTime.now());
 
         Transaction transactionWithDate = new Transaction(
-                transaction.getId(),
                 transaction.getAmount(),
                 transaction.getTransactionCost(),
                 transactionDate,
-                transaction.getType(),
+                transaction.getTransactionType(),
                 transaction.getAccountId()
         );
         return repository.save(transaction);

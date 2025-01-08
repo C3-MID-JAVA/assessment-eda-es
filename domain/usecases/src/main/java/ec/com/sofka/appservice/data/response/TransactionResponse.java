@@ -1,6 +1,7 @@
 package ec.com.sofka.appservice.data.response;
 
 import ec.com.sofka.enums.OperationType;
+import ec.com.sofka.enums.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,43 +10,41 @@ public class TransactionResponse {
     private final String customerId;
     private final String transactionId;
     private final String accountId;
-    private final String accountNumber;
     private final BigDecimal transactionCost;
     private final BigDecimal amount;
     private final LocalDateTime transactionDate;
-    private final OperationType operationType;
+    private final TransactionType transactionType;
 
     public TransactionResponse(String customerId, String transactionId,
                                String accountId,
                                BigDecimal transactionCost,
                                BigDecimal amount,
                                LocalDateTime transactionDate,
-                               OperationType operationType) {
+                               TransactionType transactionType) {
         this.customerId = customerId;
         this.transactionId = transactionId;
         this.accountId = accountId;
         this.transactionCost = transactionCost;
         this.amount = amount;
         this.transactionDate = transactionDate;
-        this.operationType = operationType;
-        this.accountNumber = null;
+        this.transactionType = transactionType;
     }
 
-    public TransactionResponse(String customerId, String transactionId,
+    public TransactionResponse(String transactionId,
+                               String accountId,
                                BigDecimal transactionCost,
-                               String accountNumber,
                                BigDecimal amount,
                                LocalDateTime transactionDate,
-                               OperationType operationType) {
-        this.customerId = customerId;
+                               TransactionType transactionType) {
         this.transactionId = transactionId;
-        this.accountNumber = accountNumber;
+        this.accountId = accountId;
         this.transactionCost = transactionCost;
         this.amount = amount;
         this.transactionDate = transactionDate;
-        this.operationType = operationType;
-        this.accountId = null;
+        this.transactionType = transactionType;
+        this.customerId = null;
     }
+
 
     public String getCustomerId() {
         return customerId;
@@ -57,10 +56,6 @@ public class TransactionResponse {
 
     public String getAccountId() {
         return accountId;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
     }
 
     public BigDecimal getTransactionCost() {
@@ -75,7 +70,7 @@ public class TransactionResponse {
         return transactionDate;
     }
 
-    public OperationType getOperationType() {
-        return operationType;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 }

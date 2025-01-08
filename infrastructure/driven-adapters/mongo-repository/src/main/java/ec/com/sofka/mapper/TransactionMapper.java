@@ -1,12 +1,17 @@
 package ec.com.sofka.mapper;
 
+import ec.com.sofka.appservice.gateway.dto.TransactionDTO;
+import ec.com.sofka.enums.TransactionType;
 import ec.com.sofka.transaction.Transaction;
 import ec.com.sofka.data.TransactionEntity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 public class TransactionMapper {
 
-    public static Transaction transactionEntityToTransaction(TransactionEntity transactionEntity) {
-        return new Transaction(
+    public static TransactionDTO transactionEntityToTransaction(TransactionEntity transactionEntity) {
+        return new TransactionDTO(
                 transactionEntity.getId(),
                 transactionEntity.getAmount(),
                 transactionEntity.getTransactionCost(),
@@ -16,9 +21,9 @@ public class TransactionMapper {
         );
     }
 
-    public static TransactionEntity transactionToAccountEntity(Transaction transaction) {
+    public static TransactionEntity transactionToAccountEntity(TransactionDTO transaction) {
         return new TransactionEntity(
-                transaction.getId(),
+                transaction.getTransactionId(),
                 transaction.getAmount(),
                 transaction.getTransactionCost(),
                 transaction.getDate(),

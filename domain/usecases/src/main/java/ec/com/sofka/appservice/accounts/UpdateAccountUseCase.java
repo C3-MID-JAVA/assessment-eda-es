@@ -60,7 +60,7 @@ public class UpdateAccountUseCase implements IUseCase<UpdateAccountRequest, Upda
                                             // Crear respuesta después de la actualización
                                             return Mono.just(new UpdateAccountResponse(
                                                     request.getAggregateId(),
-                                                    result.getId(),
+                                                    result.getAccountId(),
                                                     result.getAccountNumber(),
                                                     result.getName(),
                                                     result.getStatus()
