@@ -1,4 +1,4 @@
-rootProject.name = 'assessment-eda-es'
+rootProject.name = 'bank'
 
 include ':app-service'
 findProject(':app-service').projectDir = file('./applications/app-service')
@@ -6,14 +6,23 @@ findProject(':app-service').projectDir = file('./applications/app-service')
 include ':model'
 findProject(':model').projectDir = file('./domain/model')
 
-include ':usecases'
-findProject(':usecases').projectDir = file('./domain/usecases')
+include ':use-cases'
+findProject(':use-cases').projectDir = file('./domain/use-cases')
 
 include ':mongo-repository'
 findProject(':mongo-repository').projectDir = file('./infrastructure/driven-adapters/mongo-repository')
 
 include ':web'
 findProject(':web').projectDir = file('./infrastructure/entry-points/web')
+
+include ':rabbit-info-bus'
+findProject(':rabbit-info-bus').projectDir = file('./infrastructure/driven-adapters/rabbit-info-bus')
+
+include ':app-logs'
+findProject(':app-logs').projectDir = file('./applications/app-logs')
+
+include ':rabbit-listener-bus'
+findProject(':rabbit-listener-bus').projectDir = file('./infrastructure/entry-points/rabbit-listener-bus')
 
 include ':serializer'
 findProject(':serializer').projectDir = file('./infrastructure/helpers/serializer')
