@@ -1,28 +1,41 @@
 package ec.com.sofka.handlers;
 
-import ec.com.sofka.CreateAccountUseCase;
+import ec.com.sofka.account.CreateAccountUseCase;
+import ec.com.sofka.account.GetAllAccountsUseCase;
+import ec.com.sofka.data.AccountReqDTO;
+import ec.com.sofka.mapper.AccountDTOMapper;
 import ec.com.sofka.request.CreateAccountRequest;
-import ec.com.sofka.data.RequestDTO;
-import ec.com.sofka.data.ResponseDTO;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 public class AccountHandler {
     private final CreateAccountUseCase createAccountUseCase;
+    private final GetAllAccountsUseCase getAllAccountsUseCase;
 
-    public AccountHandler(CreateAccountUseCase createAccountUseCase) {
+    public AccountHandler(CreateAccountUseCase createAccountUseCase, GetAllAccountsUseCase getAllAccountsUseCase) {
         this.createAccountUseCase = createAccountUseCase;
+        this.getAllAccountsUseCase = getAllAccountsUseCase;
     }
 
-    public ResponseDTO createAccount(RequestDTO request){
+    public Mono<AccountReqDTO> createAccount(AccountReqDTO request){
 
-        var response = createAccountUseCase.execute(
+        return createAccountUseCase.execute(
                 new CreateAccountRequest(
-                        request.getBalance(),
-                        request.getAccount(),
-                        request.getCustomer()
+                        request.getAccountBalance(),
+                        request.getAccountNumber(),
+                        request.getAccountOwner(),
+                        request.getAccountType()
+                )
+        ).map(res ->new AccountReqDTO(res.getAccountNumber(),
+                res.getAccountBalance(), res.getAccountType(),res.getOwnerName()));
+    }
+    public Flux<AccountReqDTO> getAllAccounts() {
 
-                ));
-        return new ResponseDTO(response.getCustomerId(), response.getName());
+        return getAllAccountsUseCase.execute()
+                .map(res ->new AccountReqDTO(res.getAccountNumber(),
+                        res.getAccountBalance(), res.getAccountType(),res.getOwnerName()));
+
     }
 }

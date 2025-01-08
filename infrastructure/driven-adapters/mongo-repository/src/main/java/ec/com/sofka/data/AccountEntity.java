@@ -6,46 +6,72 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
-@Document(collection = "bank_account")
+@Document(collection = "accounts")
 public class AccountEntity {
     @Id
     private String id;
 
-    @Field("account_number")
+    @Field(name = "account_number")
     private String accountNumber;
 
-    @Field("account_holder")
-    private String owner;
-
-    @Field("global_balance")
+    @Field(name = "account_balance")
     private BigDecimal balance;
 
+    @Field(name = "owner_name")
+    private String ownerName;
 
-    public AccountEntity(BigDecimal balance, String owner, String accountNumber) {
-        this.balance = balance;
-        this.owner = owner;
+    @Field(name = "account_type")
+    private String accountType;
+
+    public AccountEntity() {
+    }
+
+    public AccountEntity(String id, String accountNumber, BigDecimal balance, String ownerName, String accountType) {
+        this.id = id;
         this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.ownerName = ownerName;
+        this.accountType = accountType;
     }
 
     public String getId() {
         return id;
     }
 
-
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getAccountNumber() {
         return accountNumber;
     }
 
-
-    public String getOwner() {
-        return owner;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
-
 
     public BigDecimal getBalance() {
         return balance;
     }
 
-}
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+}

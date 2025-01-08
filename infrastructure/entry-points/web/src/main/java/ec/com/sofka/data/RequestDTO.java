@@ -9,13 +9,10 @@ public class RequestDTO {
     //NumAcc
     public String account;
     public BigDecimal balance;
+    public String  transactionType;
 
-    public RequestDTO(String customerId, String customer, String account, BigDecimal balance) {
-        this.customerId = customerId;
-        this.customer = customer;
-        this.account = account;
-        this.balance = balance;
-    }
+
+
 
 
     public String getCustomer() {

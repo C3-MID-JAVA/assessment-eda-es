@@ -17,3 +17,6 @@ findProject(':web').projectDir = file('./infrastructure/entry-points/web')
 
 include ':serializer'
 findProject(':serializer').projectDir = file('./infrastructure/helpers/serializer')
+
+include ':helpers'
+findProject(':helpers').projectDir = file('./shared/helpers')

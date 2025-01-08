@@ -2,21 +2,28 @@ package ec.com.sofka.gateway.dto;
 
 import java.math.BigDecimal;
 
-//This class is used to transfer data between the application and the database -
-// Notice how this affect the AccountRepository interface that lives in usecases
-//Notice also how this impacts on the driven adapter that implements the AccountRepository interface that lives in usecases.
 public class AccountDTO {
     private String id;
     private String accountNumber;
-    private String owner;
+    private String ownerName;
     private BigDecimal balance;
+    private String accountType;
 
 
-    public AccountDTO(BigDecimal balance, String owner, String accountNumber) {
+    public AccountDTO(BigDecimal balance, String ownerName, String accountNumber, String accountType) {
         this.balance = balance;
-        this.owner = owner;
+        this.ownerName = ownerName;
         this.accountNumber = accountNumber;
+        this.accountType = accountType;
     }
+    public AccountDTO(String id, BigDecimal balance, String ownerName, String accountNumber, String accountType) {
+        this.id = id;
+        this.balance = balance;
+        this.ownerName = ownerName;
+        this.accountNumber = accountNumber;
+        this.accountType = accountType;
+    }
+
 
     public String getId() {
         return id;
@@ -29,12 +36,20 @@ public class AccountDTO {
     }
 
 
-    public String getOwner() {
-        return owner;
+    public String getOwnerName() {
+        return ownerName;
     }
 
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 }

@@ -1,3 +1,6 @@
 dependencies {
     implementation project(':model')
+    implementation project(":helpers")
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
