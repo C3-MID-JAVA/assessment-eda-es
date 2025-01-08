@@ -42,8 +42,7 @@ public class TransactionHandler {
     public Mono<TransactionResponseDTO> createDeposit(TransactionRequestDTO transactionRequestDTO) {
         return createDepositUseCase.execute(transactionMapper.toCreateTransactionRequest(transactionRequestDTO))
                 .flatMap(transaction -> {
-                    System.out.println("custom transacion"+transaction.getCustomerId());
-                    GetByElementRequest request = new GetByElementRequest(transactionRequestDTO.getAggregateId(), transaction.getAccountId());
+                    GetByElementRequest request = new GetByElementRequest(transaction.getCustomerId(), transaction.getAccountId());
                     return getAccountByIdUseCase.execute(request)
                             .map(account -> {
                                 return transactionMapper.toTransactionResponseDTO(transaction);
