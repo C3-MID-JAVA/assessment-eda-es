@@ -1,21 +1,22 @@
-package ec.com.sofka.appservice.accounts.request;
+package ec.com.sofka.appservice.data.request;
 
 import ec.com.sofka.generics.utils.Request;
 
 import java.math.BigDecimal;
 
 //Usage of the Request class
-public class GetAccountRequest extends Request {
+public class UpdateAccountRequest extends Request {
     private final BigDecimal balance;
     private final String numberAcc;
     private final String customerName;
+    private final String status;
 
-
-    public GetAccountRequest(final String aggregateId, final String numberAcc) {
+    public UpdateAccountRequest(final String aggregateId, final BigDecimal balance, final String numberAcc, final String customerName, final String status) {
         super(aggregateId);
-        this.balance = null;
+        this.balance = balance;
         this.numberAcc = numberAcc;
-        this.customerName = null;
+        this.customerName = customerName;
+        this.status = status;
     }
 
     public BigDecimal getBalance() {
@@ -30,4 +31,7 @@ public class GetAccountRequest extends Request {
         return customerName;
     }
 
+    public String getStatus() {
+        return status;
+    }
 }

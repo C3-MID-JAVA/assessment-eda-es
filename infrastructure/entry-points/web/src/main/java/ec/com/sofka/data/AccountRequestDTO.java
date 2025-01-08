@@ -60,4 +60,23 @@ public class AccountRequestDTO {
         return status;
     }
 
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setInitialBalance(BigDecimal initialBalance) {
+        this.initialBalance = initialBalance;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

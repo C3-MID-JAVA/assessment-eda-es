@@ -6,32 +6,23 @@ import java.math.BigDecimal;
 //Notice how this affect the AccountRepository interface that lives in usecases
 //Notice also how this impacts on the driven adapter that implements the AccountRepository interface that lives in usecases.
 public class AccountDTO {
-    private String id;
+    private String accountId;
     private String accountNumber;
     private String name;
     private BigDecimal balance;
     private String status;
 
-    public AccountDTO(String id, String name, String accountNumber, BigDecimal balance, String status) {
-        this.id = id;
+    public AccountDTO(String accountId, String name, String accountNumber, BigDecimal balance, String status) {
+        this.accountId = accountId;
         this.balance = balance;
         this.name = name;
         this.accountNumber = accountNumber;
         this.status = status;
     }
 
-    public AccountDTO(String name, String accountNumber, BigDecimal balance, String status) {
-        this.balance = balance;
-        this.name = name;
-        this.accountNumber = accountNumber;
-        this.status = status;
+    public String getAccountId() {
+        return accountId;
     }
-
-    public String getId() {
-        return id;
-    }
-
-
 
     public String getAccountNumber() {
         return accountNumber;

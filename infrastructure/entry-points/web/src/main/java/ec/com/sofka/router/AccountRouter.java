@@ -1,6 +1,7 @@
 package ec.com.sofka.router;
 
 import ec.com.sofka.ErrorResponse;
+import ec.com.sofka.data.AccountReqByIdDTO;
 import ec.com.sofka.data.AccountRequestDTO;
 import ec.com.sofka.data.AccountResponseDTO;
 import ec.com.sofka.globalexceptions.GlobalErrorHandler;
@@ -71,29 +72,58 @@ public class AccountRouter {
                     )
             ),
             @RouterOperation(
-                    path = "/accounts/accountNumber/{accountNumber}",
+                    path = "/update",
                     operation = @Operation(
                             tags = {"Accounts"},
-                            operationId = "getByAccountNumber",
-                            summary = "Get account by account number",
-                            description = "Fetches the account details associated with the given account number.",
-                            parameters = {
-                                    @Parameter(
-                                            name = "accountNumber",
-                                            description = "The account number to retrieve account info",
-                                            required = true,
-                                            in = ParameterIn.PATH
+                            operationId = "update",
+                            summary = "Create a new account",
+                            description = "This endpoint allows the creation of a new bank account for a user. It accepts user details in the request body and returns the created account's information.",
+                            requestBody = @RequestBody(
+                                    description = "Account creation details",
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = AccountRequestDTO.class)
                                     )
-                            },
+                            ),
                             responses = {
                                     @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Successfully retrieved the account details",
+                                            responseCode = "201",
+                                            description = "Account successfully created",
                                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountResponseDTO.class))
                                     ),
                                     @ApiResponse(
-                                            responseCode = "404",
-                                            description = "Account not found.",
+                                            responseCode = "400",
+                                            description = "Bad request, validation error or missing required fields",
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/accounts/accountId",
+                    operation = @Operation(
+                            tags = {"Accounts"},
+                            operationId = "getAccountById",
+                            summary = "Create a new account",
+                            description = "This endpoint allows the creation of a new bank account for a user. It accepts user details in the request body and returns the created account's information.",
+                            requestBody = @RequestBody(
+                                    description = "Account creation details",
+                                    required = false,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = AccountReqByIdDTO.class)
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "201",
+                                            description = "Account successfully created",
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountResponseDTO.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Bad request, validation error or missing required fields",
                                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                                     )
                             }
@@ -116,29 +146,29 @@ public class AccountRouter {
                     )
             ),
             @RouterOperation(
-                    path = "/accounts/{accountId}",
+                    path = "/accounts/accountNumber",
                     operation = @Operation(
                             tags = {"Accounts"},
-                            operationId = "getAccountById",
-                            summary = "Get account by ID",
-                            description = "Fetches the account details associated with the given account ID.",
-                            parameters = {
-                                    @Parameter(
-                                            name = "accountId",
-                                            description = "The account ID to retrieve account info",
-                                            required = true,
-                                            in = ParameterIn.PATH
+                            operationId = "getAccountByAccountNumber",
+                            summary = "Create a new account",
+                            description = "This endpoint allows the creation of a new bank account for a user. It accepts user details in the request body and returns the created account's information.",
+                            requestBody = @RequestBody(
+                                    description = "Account creation details",
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = AccountReqByIdDTO.class)
                                     )
-                            },
+                            ),
                             responses = {
                                     @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Successfully retrieved the account details",
+                                            responseCode = "201",
+                                            description = "Account successfully created",
                                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccountResponseDTO.class))
                                     ),
                                     @ApiResponse(
-                                            responseCode = "404",
-                                            description = "Account not found.",
+                                            responseCode = "400",
+                                            description = "Bad request, validation error or missing required fields",
                                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
                                     )
                             }
@@ -177,10 +207,11 @@ public class AccountRouter {
     public RouterFunction<ServerResponse> accountRoutes() {
         return RouterFunctions
                 .route(POST("/accounts").and(accept(MediaType.APPLICATION_JSON)), this::createAccount)
-                //.andRoute(GET("/accounts/accountNumber/{accountNumber}"), this::getAccountByAccountNumber)
+                .andRoute(POST("/update").and(accept(MediaType.APPLICATION_JSON)), this::updateAccount)
+                .andRoute(POST("/accounts/accountNumber").and(accept(MediaType.APPLICATION_JSON)), this::getAccountByAccountNumber)
                 .andRoute(GET("/accounts/getAll"), this::listAccounts)
-               // .andRoute(GET("/accounts/{accountId}"), this::getAccountById)
-               // .andRoute(GET("/accounts/{accountId}/balance"), this::getAccountBalance);
+                .andRoute(POST("/accounts/accountId").and(accept(MediaType.APPLICATION_JSON)), this::getAccountById)
+                // .andRoute(GET("/accounts/{accountId}/balance"), this::getAccountBalance);
         ;
     }
 
@@ -188,6 +219,17 @@ public class AccountRouter {
         return request.bodyToMono(AccountRequestDTO.class)
                 .flatMap(dto -> validationService.validate(dto, AccountRequestDTO.class))
                 .flatMap(handler::createAccount)
+                .flatMap(accountResponseDTO -> ServerResponse
+                        .status(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(accountResponseDTO))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
+    }
+
+    public Mono<ServerResponse> updateAccount(ServerRequest request) {
+        return request.bodyToMono(AccountRequestDTO.class)
+                .flatMap(dto -> validationService.validate(dto, AccountRequestDTO.class))
+                .flatMap(handler::updateAccount)
                 .flatMap(accountResponseDTO -> ServerResponse
                         .status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -209,7 +251,81 @@ public class AccountRouter {
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
 */
+/*
+    private Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
+        // Extraemos el body de la solicitud como un AccountRequestDTO
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                .flatMap(dto -> validationService.validate(dto, AccountReqByIdDTO.class))
+                .flatMap(accountRequestDTO -> handler.getAccountByNumber(accountRequestDTO)
+                        .flatMap(response -> ServerResponse
+                                .ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(response)))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex)); // Manejo de errores
+    }
+*//*
+    public Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                .doOnError(ex -> System.out.println("Error deserializando el cuerpo de la solicitud: " + ex.getMessage()))
 
+                //.flatMap(dto -> validationService.validate(dto, AccountReqByIdDTO.class))
+                .flatMap(handler::getAccountByNumber)
+                .flatMap(accountResponseDTO -> ServerResponse
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(accountResponseDTO))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
+    }*/
+
+    public Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                .doOnNext(dto -> {
+                })
+                .flatMap(handler::getAccountByNumber)
+                .flatMap(accountResponseDTO -> ServerResponse
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(accountResponseDTO))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
+    }
+
+/*
+    public Mono<ServerResponse> getAccountById(ServerRequest request) {
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                .doOnError(ex -> System.out.println("Error deserializando el cuerpo de la solicitud: " + ex.getMessage()))
+                .flatMap(handler::getAccountById)
+                .flatMap(accountResponseDTO -> ServerResponse
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(accountResponseDTO))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
+    }*/
+
+    public Mono<ServerResponse> getAccountById(ServerRequest request) {
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                .doOnNext(dto -> {
+                })
+                .flatMap(handler::getAccountById)
+                .flatMap(accountResponseDTO -> ServerResponse
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(accountResponseDTO))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
+    }
+
+/*
+
+    private Mono<ServerResponse> getAccountById(ServerRequest request) {
+        // Extraemos el body de la solicitud como un AccountRequestDTO
+        return request.bodyToMono(AccountReqByIdDTO.class)
+                //.flatMap(dto -> validationService.validate(dto, AccountReqByIdDTO.class))
+                .flatMap(accountRequestDTO -> handler.getAccountById(accountRequestDTO)
+                        .flatMap(response -> ServerResponse
+                                .ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(response)))
+                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex)); // Manejo de errores
+    }*/
 
     public Mono<ServerResponse> listAccounts(ServerRequest request) {
         return handler.getAllAccounts()
@@ -220,16 +336,9 @@ public class AccountRouter {
                         .bodyValue(accounts))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
-/*
-    private Mono<ServerResponse> getAccountById(ServerRequest request) {
-        String accountId = request.pathVariable("accountId");
-        return handler.getAccountByAccountId(accountId)
-                .flatMap(response -> ServerResponse
-                        .ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(response))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }*/
+
+
+
 /*
     private Mono<ServerResponse> getAccountBalance(ServerRequest request) {
         String accountId = request.pathVariable("accountId");

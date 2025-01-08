@@ -59,21 +59,17 @@ public class EventEntity {
         return eventSerializer.writeToJson(domainEvent);
     }
 
-    public Mono<DomainEvent> deserializeEvent(JSONMap eventSerializer) {
-        return Mono.fromCallable(() -> {
-            try {
-                String className = Arrays.stream(this.getEventType().toLowerCase().split("_"))
-                        .map(part -> Character.toUpperCase(part.charAt(0)) + part.substring(1))
-                        .collect(Collectors.joining());
+    public DomainEvent deserializeEvent(JSONMap eventSerializer) {
+        try {
+            String className = Arrays.stream(this.getEventType().toLowerCase().split("_"))
+                    .map(part -> Character.toUpperCase(part.charAt(0)) + part.substring(1))
+                    .collect(Collectors.joining());
 
-                return (DomainEvent) eventSerializer.readFromJson(
-                        this.getEventData(),
-                        Class.forName("ec.com.sofka.aggregate.events." + className)
-                );
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Class not found for event type: " + this.getEventType(), e);
-            }
-        });
+            return (DomainEvent) eventSerializer
+                    .readFromJson(this.getEventData(), Class.forName("ec.com.sofka.events."+className));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 }
 

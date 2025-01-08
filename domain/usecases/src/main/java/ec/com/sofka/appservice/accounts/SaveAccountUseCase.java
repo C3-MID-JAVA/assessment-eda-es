@@ -11,8 +11,8 @@ public class SaveAccountUseCase {
     public SaveAccountUseCase(IAccountRepository repository) {
         this.repository = repository;
     }
-/*
+
     public Mono<Account> apply(Account account) {
         return repository.save(account);
-    }*/
+    }
 }

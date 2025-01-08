@@ -1,13 +1,13 @@
 package ec.com.sofka.handler;
 
 import ec.com.sofka.appservice.accounts.*;
-import ec.com.sofka.appservice.accounts.request.CreateAccountRequest;
-import ec.com.sofka.appservice.accounts.request.GetAccountRequest;
-import ec.com.sofka.appservice.accounts.request.UpdateAccountRequest;
+import ec.com.sofka.appservice.data.request.CreateAccountRequest;
+import ec.com.sofka.appservice.data.request.GetByElementRequest;
+import ec.com.sofka.appservice.data.request.UpdateAccountRequest;
+import ec.com.sofka.data.AccountReqByIdDTO;
 import ec.com.sofka.data.AccountRequestDTO;
 import ec.com.sofka.data.AccountResponseDTO;
 import ec.com.sofka.mapper.AccountDTOMapper;
-import ec.com.sofka.mapper.AccountMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -59,9 +59,9 @@ public class AccountHandler {
                 ));
     }
 
-    public Mono<AccountResponseDTO> getAccountByNumber(AccountRequestDTO request) {
+    public Mono<AccountResponseDTO> getAccountByNumber(AccountReqByIdDTO request) {
         return getAccountByAccountNumberUseCase.execute(
-                new GetAccountRequest(
+                new GetByElementRequest(
                         request.getCustomerId(),
                         request.getAccountNumber()
                 )).map(response -> new AccountResponseDTO(
@@ -73,6 +73,22 @@ public class AccountHandler {
                 response.getStatus()
         ));
     }
+
+    public Mono<AccountResponseDTO> getAccountById(AccountReqByIdDTO request) {
+        return getAccountByIdUseCase.execute(
+                new GetByElementRequest(
+                        request.getCustomerId(),
+                        request.getCustomerId()
+                )).map(response -> new AccountResponseDTO(
+                response.getCustomerId(),
+                response.getAccountId(),
+                response.getName(),
+                response.getAccountNumber(),
+                response.getBalance(),
+                response.getStatus()
+        ));
+    }
+
 
     public Mono<AccountResponseDTO> updateAccount(AccountRequestDTO request) {
         return updateAccountUseCase.execute(

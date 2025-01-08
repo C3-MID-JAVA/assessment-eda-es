@@ -4,19 +4,27 @@ import ec.com.sofka.account.Account;
 import ec.com.sofka.account.values.AccountId;
 import ec.com.sofka.aggregate.events.AccountCreated;
 import ec.com.sofka.aggregate.events.AccountUpdated;
+import ec.com.sofka.aggregate.events.TransactionCreated;
 import ec.com.sofka.aggregate.values.CustomerId;
+import ec.com.sofka.enums.TransactionType;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;
+import ec.com.sofka.transaction.Transaction;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 //2. Creation of the aggregate class - The communication between the entities and the external world.
 public class Customer extends AggregateRoot<CustomerId> {
     //5. Add the Account to the aggregate: Can't be final bc the aggregate is mutable by EventDomains
     private Account account;
+
+    private final List<Transaction> transactions = new ArrayList<>(); // Gestión de transacciones
+
 
     //To create the Aggregate the first time, ofc have to set the id as well.
     public Customer() {
@@ -40,11 +48,19 @@ public class Customer extends AggregateRoot<CustomerId> {
         this.account = account;
     }
 
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
     //Remember that User as Aggregate is the open door to interact with the entities
     public void createAccount(String accountNumber, BigDecimal accountBalance, String name, String status) {
         //Add the event to the aggregate
         addEvent(new AccountCreated(new AccountId().getValue(), accountNumber,accountBalance,name,status)).apply();
 
+    }
+
+    public void createTransaction(String transactionId, BigDecimal amount, BigDecimal transactionCost, LocalDateTime date, TransactionType type, String accountId) {
+        addEvent(new TransactionCreated(transactionId,amount,transactionCost,date,type,accountId)).apply();
     }
 
     //Remember that User as Aggregate is the open door to interact with the entities
@@ -55,11 +71,12 @@ public class Customer extends AggregateRoot<CustomerId> {
     }
 
     //To rebuild the aggregate
-    public static Mono<Customer> from(final String id, Flux<DomainEvent> events) {
+    public static Customer from(final String id, List<DomainEvent> events) {
         Customer customer = new Customer(id);
-        return events
-                .flatMap(event -> Mono.fromRunnable(() -> customer.addEvent(event).apply()))
-                .then(Mono.just(customer));
+        events.stream()
+                .filter(event -> id.equals(event.getAggregateRootId()))
+                .forEach((event) -> customer.addEvent(event).apply());
+        return customer;
     }
 
 }

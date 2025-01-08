@@ -1,26 +1,26 @@
 package ec.com.sofka.transaction;
 
+import ec.com.sofka.account.values.AccountId;
 import ec.com.sofka.enums.TransactionType;
+import ec.com.sofka.generics.utils.Entity;
+import ec.com.sofka.transaction.values.TransactionId;
+import ec.com.sofka.transaction.values.objects.Amount;
+import ec.com.sofka.transaction.values.objects.TransactionCost;
+import ec.com.sofka.transaction.values.objects.TransactionDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Transaction {
+public class Transaction extends Entity<TransactionId> {
 
-    private String id;
+    private final Amount amount;
+    private final TransactionCost transactionCost;
+    private final TransactionDate date;
+    private final TransactionType type; // Usando el enum directamente
+    private final AccountId accountId;
 
-    private BigDecimal amount;
-
-    private BigDecimal transactionCost;
-
-    private LocalDateTime date;
-
-    private TransactionType type;
-
-    private String accountId;
-
-    public Transaction(String id, BigDecimal amount, BigDecimal transactionCost, LocalDateTime date, TransactionType type, String accountId) {
-        this.id = id;
+    public Transaction(TransactionId id,Amount amount, TransactionCost transactionCost, TransactionDate date, TransactionType type, AccountId accountId) {
+        super(id);
         this.amount = amount;
         this.transactionCost = transactionCost;
         this.date = date;
@@ -28,59 +28,23 @@ public class Transaction {
         this.accountId = accountId;
     }
 
-    public Transaction(BigDecimal amount, BigDecimal transactionCost, LocalDateTime date, TransactionType type, String accountId) {
-        this.amount = amount;
-        this.transactionCost = transactionCost;
-        this.date = date;
-        this.type = type;
-        this.accountId = accountId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public BigDecimal getAmount() {
+    public Amount getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public BigDecimal getTransactionCost() {
+    public TransactionCost getTransactionCost() {
         return transactionCost;
     }
 
-    public void setTransactionCost(BigDecimal transactionCost) {
-        this.transactionCost = transactionCost;
-    }
-
-    public LocalDateTime getDate() {
+    public TransactionDate getDate() {
         return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
     }
 
     public TransactionType getType() {
         return type;
     }
 
-    public void setType(TransactionType type) {
-        this.type = type;
-    }
-
-    public String getAccountId() {
+    public AccountId getAccountId() {
         return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 }

@@ -1,17 +1,14 @@
 package ec.com.sofka.appservice.accounts;
 
-import ec.com.sofka.account.Account;
 import ec.com.sofka.aggregate.Customer;
-import ec.com.sofka.appservice.accounts.request.GetAccountRequest;
-import ec.com.sofka.appservice.accounts.response.GetAccountResponse;
+import ec.com.sofka.appservice.data.response.AccountResponse;
+import ec.com.sofka.appservice.data.request.GetByElementRequest;
 import ec.com.sofka.appservice.gateway.IAccountRepository;
 import ec.com.sofka.appservice.gateway.IEventStore;
-import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class GetAccountByAccountNumberUseCase implements IUseCase <GetAccountRequest, GetAccountResponse> {
+public class GetAccountByAccountNumberUseCase implements IUseCase <GetByElementRequest, AccountResponse> {
 
     private final IAccountRepository repository;
     private final IEventStore eventRepository;
@@ -22,32 +19,45 @@ public class GetAccountByAccountNumberUseCase implements IUseCase <GetAccountReq
     }
 
     @Override
-    public Mono<GetAccountResponse> execute(GetAccountRequest request) {
+    public Mono<AccountResponse> execute(GetByElementRequest request) {
+        // Obtener los eventos relacionados con el aggregateId de forma reactiva
         return eventRepository.findAggregate(request.getAggregateId())
-                .collectList()  // Convierte el Flux<DomainEvent> en un Mono<List<DomainEvent>>
+                .collectList() // Convierte el flujo de eventos en una lista
                 .flatMap(events -> {
-                    // Convertir List<DomainEvent> a Flux<DomainEvent>
-                    Flux<DomainEvent> eventsFlux = Flux.fromIterable(events);
+                    // Reconstruir el agregado usando los eventos
+                    Customer customer = Customer.from(request.getAggregateId(), events);
 
-                    // Reconstruir el aggregate
-                    return Customer.from(request.getAggregateId(), eventsFlux)
-                            .flatMap(customer -> {
-                                if (customer.getAccount() == null || customer.getAccount().getAccountNumber() == null) {
-                                    return Mono.error(new IllegalStateException("Customer does not have a valid account"));
-                                }
-
-                                return repository.findByAccountNumber(customer.getAccount().getAccountNumber().getValue())
-                                        .map(result -> new GetAccountResponse(
-                                                request.getAggregateId(),
-                                                result.getId(),
-                                                result.getAccountNumber(),
-                                                result.getName(),
-                                                result.getBalance(),
-                                                result.getStatus()
-                                        ));
-                            });
+                    // Obtener la cuenta del repositorio de forma reactiva
+                    return repository.findByAccountNumber(customer.getAccount().getAccountNumber().getValue())
+                            .map(accountDTO -> new AccountResponse(
+                                    request.getAggregateId(),
+                                    accountDTO.getAccountId(),
+                                    accountDTO.getAccountNumber(),
+                                    accountDTO.getName(),
+                                    accountDTO.getBalance(),
+                                    accountDTO.getStatus()
+                            ));
                 });
     }
+/*
 
+    @Override
+    public Mono<GetAccountResponse> execute(GetAccountRequest request) {
+
+        return eventRepository.findAggregate(request.getAggregateId())
+                .collectList()
+                .map(eventsList -> Customer.from(request.getAggregateId(), eventsList))
+                .flatMap(accountAggregate ->
+                        repository.findByAccountNumber(accountAggregate.getAccount().getAccountNumber().getValue())
+                                .map(result -> new GetAccountResponse(
+                                        request.getAggregateId(),
+                                        result.getId(),
+                                        result.getAccountNumber(),
+                                        result.getName(),
+                                        result.getBalance(),
+                                        result.getStatus()
+                                ))
+                );
+    }*/
 
 }

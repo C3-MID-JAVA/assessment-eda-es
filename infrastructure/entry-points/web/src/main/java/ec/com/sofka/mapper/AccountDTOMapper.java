@@ -1,10 +1,9 @@
 package ec.com.sofka.mapper;
 
-import ec.com.sofka.account.Account;
-import ec.com.sofka.appservice.accounts.request.CreateAccountRequest;
-import ec.com.sofka.appservice.accounts.request.GetAccountRequest;
-import ec.com.sofka.appservice.accounts.request.UpdateAccountRequest;
-import ec.com.sofka.appservice.accounts.response.CreateAccountResponse;
+import ec.com.sofka.appservice.data.request.CreateAccountRequest;
+import ec.com.sofka.appservice.data.request.GetByElementRequest;
+import ec.com.sofka.appservice.data.request.UpdateAccountRequest;
+import ec.com.sofka.appservice.data.response.AccountResponse;
 import ec.com.sofka.data.AccountRequestDTO;
 import ec.com.sofka.data.AccountResponseDTO;
 
@@ -19,7 +18,7 @@ public class AccountDTOMapper {
     }
 
     // Convierte la respuesta del caso de uso a AccountResponseDTO
-    public static AccountResponseDTO toAccountResponseDTO(CreateAccountResponse response) {
+    public static AccountResponseDTO toAccountResponseDTO(AccountResponse response) {
         return new AccountResponseDTO(
                 response.getCustomerId(),
                 response.getAccountId(),
@@ -30,8 +29,8 @@ public class AccountDTOMapper {
         );
     }
 
-    public static GetAccountRequest toGetAccountRequest(AccountRequestDTO request) {
-        return new GetAccountRequest(
+    public static GetByElementRequest toGetAccountRequest(AccountRequestDTO request) {
+        return new GetByElementRequest(
                 request.getCustomerId(),
                 request.getAccountNumber()
         );

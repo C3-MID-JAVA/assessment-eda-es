@@ -1,18 +1,14 @@
 package ec.com.sofka.appservice.accounts;
 
 import ec.com.sofka.aggregate.Customer;
-import ec.com.sofka.appservice.accounts.request.GetByUserIdRequest;
-import ec.com.sofka.appservice.accounts.response.CreateAccountResponse;
-import ec.com.sofka.appservice.accounts.response.GetAccountResponse;
+import ec.com.sofka.appservice.data.response.AccountResponse;
+import ec.com.sofka.appservice.data.request.GetByElementRequest;
 import ec.com.sofka.appservice.gateway.IAccountRepository;
 import ec.com.sofka.appservice.gateway.IEventStore;
-import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class GetAccountByIdUseCase implements IUseCase<GetByUserIdRequest, GetAccountResponse> {
+public class GetAccountByIdUseCase implements IUseCase<GetByElementRequest, AccountResponse> {
 
     private final IAccountRepository repository;
     private final IEventStore eventRepository;
@@ -20,9 +16,9 @@ public class GetAccountByIdUseCase implements IUseCase<GetByUserIdRequest, GetAc
         this.repository = repository;
         this.eventRepository = eventRepository;
     }
-
+/*
     @Override
-    public Mono<GetAccountResponse> execute(GetByUserIdRequest request) {
+    public Mono<AccountResponse> execute(GetByUserIdRequest request) {
         return eventRepository.findAggregate(request.getAggregateId())
                 .collectList()  // Convierte el Flux<DomainEvent> en un Mono<List<DomainEvent>>
                 .flatMap(events -> {
@@ -33,11 +29,11 @@ public class GetAccountByIdUseCase implements IUseCase<GetByUserIdRequest, GetAc
                     return Customer.from(request.getAggregateId(), eventsFlux)
                             .flatMap(customer -> {
                                 if (customer.getAccount() == null || customer.getAccount().getAccountNumber() == null) {
-                                    return Mono.error(new IllegalStateException("Customer does not have a valid account"));
+                                    return Mono.error(new IllegalStateException("Customer does not have a valid customerId"));
                                 }
 
                                 return repository.findById(customer.getAccount().getAccountNumber().getValue())
-                                        .map(result -> new GetAccountResponse(
+                                        .map(result -> new AccountResponse(
                                                 request.getAggregateId(),
                                                 result.getId(),
                                                 result.getAccountNumber(),
@@ -55,5 +51,23 @@ public class GetAccountByIdUseCase implements IUseCase<GetByUserIdRequest, GetAc
                 .switchIfEmpty(Mono.error(new NoSuchElementException("No account found with id: " + id)));
     }*/
 
+    @Override
+    public Mono<AccountResponse> execute(GetByElementRequest request) {
+
+        return eventRepository.findAggregate(request.getAggregateId())
+                .collectList()
+                .map(eventsList -> Customer.from(request.getAggregateId(), eventsList))
+                .flatMap(accountAggregate ->
+                        repository.findById(accountAggregate.getAccount().getId().getValue())
+                                .map(result -> new AccountResponse(
+                                        request.getAggregateId(),
+                                        result.getAccountId(),
+                                        result.getAccountNumber(),
+                                        result.getName(),
+                                        result.getBalance(),
+                                        result.getStatus()
+                                ))
+                );
+    }
 
 }

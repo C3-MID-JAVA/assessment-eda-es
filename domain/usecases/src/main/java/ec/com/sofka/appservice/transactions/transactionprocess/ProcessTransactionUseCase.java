@@ -1,6 +1,9 @@
 package ec.com.sofka.appservice.transactions.transactionprocess;
 
 import ec.com.sofka.ConflictException;
+import ec.com.sofka.appservice.data.request.CreateTransactionRequest;
+import ec.com.sofka.appservice.data.request.GetByElementRequest;
+import ec.com.sofka.appservice.data.response.TransactionResponse;
 import ec.com.sofka.transaction.Transaction;
 import ec.com.sofka.appservice.accounts.GetAccountByAccountNumberUseCase;
 import ec.com.sofka.appservice.accounts.SaveAccountUseCase;
@@ -31,10 +34,13 @@ public class ProcessTransactionUseCase {
         this.saveAccountUseCase = saveAccountUseCase;
         this.saveTransactionUseCase = saveTransactionUseCase;
     }
-/*
-    public Mono<Transaction> apply(Transaction transaction, OperationType operationType) {
-        return getAccountByNumberUseCase.apply(transaction.getAccountId())
-                .flatMap(account -> getTransactionStrategyUseCase.apply(account, transaction.getType(), operationType,transaction.getAmount())
+
+    public Mono<Transaction> apply(CreateTransactionRequest transaction, OperationType operationType) {
+
+        GetByElementRequest accountNumber = new GetByElementRequest(transaction.getAggregateId(),transaction.getAccountNumber());
+
+        return getAccountByNumberUseCase.execute(accountNumber)
+                .flatMap(account -> getTransactionStrategyUseCase.apply(account, transaction.getTransactionType(), operationType,transaction.getAmount())
                         .flatMap(strategy -> {
                             BigDecimal finalBalance = calculateFinalBalanceUseCase.apply(
                                     account.getBalance(),
@@ -55,5 +61,5 @@ public class ProcessTransactionUseCase {
                                         return saveTransactionUseCase.apply(transaction);
                                     });
                         }));
-    }*/
+    }
 }

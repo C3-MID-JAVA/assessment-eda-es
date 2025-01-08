@@ -1,5 +1,6 @@
 package ec.com.sofka.generics.domain;
 
+import ec.com.sofka.ConflictException;
 import ec.com.sofka.generics.interfaces.IApplyEvent;
 
 import java.util.*;
@@ -39,7 +40,10 @@ public class DomainActionsHandler {
             action.accept(event);
             long version = increaseVersion(event);
             event.setVersion(version);
-        }catch(Exception ignored){}
+        }catch(Exception e){
+            System.out.println("errorrr: "+e.getMessage());
+            new ConflictException("error: "+e.getMessage(),e);
+        }
     }
 
     private void apply(final DomainEvent event){

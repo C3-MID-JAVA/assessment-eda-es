@@ -1,59 +1,63 @@
 package ec.com.sofka.adapter;
 
-import ec.com.sofka.IJSONMapper;
 import ec.com.sofka.JSONMap;
 import ec.com.sofka.appservice.gateway.IEventStore;
 import ec.com.sofka.data.EventEntity;
 import ec.com.sofka.database.events.IEventMongoRepository;
 import ec.com.sofka.generics.domain.DomainEvent;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Comparator;
-import java.util.List;
 
 @Repository
 public class EventMongoAdapter implements IEventStore {
 
     private final IEventMongoRepository repository;
-    private final IJSONMapper mapper;
-    private final ReactiveMongoTemplate eventMongoTemplate;
+    private final JSONMap mapper;
+    private final ReactiveMongoTemplate eventReactiveMongoTemplate;
 
-    public EventMongoAdapter(IEventMongoRepository repository, JSONMap mapper, @Qualifier("eventMongoTemplate") ReactiveMongoTemplate eventMongoTemplate) {
+    public EventMongoAdapter(IEventMongoRepository repository, JSONMap mapper, @Qualifier("eventMongoTemplate")ReactiveMongoTemplate eventReactiveMongoTemplate) {
         this.repository = repository;
         this.mapper = mapper;
-        this.eventMongoTemplate = eventMongoTemplate;
+        this.eventReactiveMongoTemplate = eventReactiveMongoTemplate;
     }
 
     @Override
     public Mono<DomainEvent> save(DomainEvent event) {
-        EventEntity e = new EventEntity(
-                event.getEventId(),
-                event.getAggregateRootId(),
-                event.getEventType(),
-                mapper.writeToJson(event),
-                event.getWhen().toString(),
-                event.getVersion()
-        );
-        return repository.save(e).flatMap( ev->Mono.just(event));
+        return Mono.just(event)
+                .map(evt -> {
+                    String eventData = mapper.writeToJson(evt);
+                    return new EventEntity(
+                            evt.getEventId(),
+                            evt.getAggregateRootId(),
+                            evt.getEventType(),
+                            eventData,
+                            evt.getWhen().toString(),
+                            evt.getVersion()
+                    );
+                })
+                .flatMap(repository::save)
+                .thenReturn(event);
     }
 
     @Override
     public Flux<DomainEvent> findAggregate(String aggregateId) {
         return repository.findByAggregateId(aggregateId)
-                .map(eventEntity -> mapper.readFromJson(eventEntity.getEventData(), DomainEvent.class));
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper))
+                .sort(Comparator.comparing(DomainEvent::getVersion));
     }
+
 
     @Override
     public Flux<DomainEvent> findAllAggregates() {
-        return repository.findAll() // Devuelve Flux<EventEntity>
-                .map(eventEntity -> mapper.readFromJson(eventEntity.getEventData(), DomainEvent.class)) // Mapeo a DomainEvent
+        return repository.findAll()
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper))
                 .sort(Comparator.comparing(DomainEvent::getAggregateRootId)
-                        .thenComparing(DomainEvent::getVersion, Comparator.reverseOrder())); // Ordenar los eventos
+                        .thenComparing(DomainEvent::getVersion, Comparator.reverseOrder()));
     }
-}
 
+}

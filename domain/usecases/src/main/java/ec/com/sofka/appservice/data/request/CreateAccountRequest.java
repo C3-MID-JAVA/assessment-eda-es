@@ -1,4 +1,4 @@
-package ec.com.sofka.appservice.accounts.request;
+package ec.com.sofka.appservice.data.request;
 
 import ec.com.sofka.account.values.AccountEnum;
 import ec.com.sofka.generics.utils.Request;
@@ -6,18 +6,18 @@ import ec.com.sofka.generics.utils.Request;
 import java.math.BigDecimal;
 
 //Usage of the Request class
-public class UpdateAccountRequest extends Request {
+public class CreateAccountRequest extends Request {
     private final BigDecimal balance;
     private final String numberAcc;
     private final String customerName;
     private final String status;
 
-    public UpdateAccountRequest(final String aggregateId, final BigDecimal balance, final String numberAcc, final String customerName, final String status) {
-        super(aggregateId);
+    public CreateAccountRequest(final String numberAcc, final String customerName, final BigDecimal balance) {
+        super(null);
         this.balance = balance;
         this.numberAcc = numberAcc;
         this.customerName = customerName;
-        this.status = status;
+        this.status = AccountEnum.ACCOUNT_ACTIVE.name();
     }
 
     public BigDecimal getBalance() {
@@ -36,3 +36,4 @@ public class UpdateAccountRequest extends Request {
         return status;
     }
 }
+
