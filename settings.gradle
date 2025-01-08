@@ -9,6 +9,9 @@ findProject(':model').projectDir = file('./domain/model')
 include ':usecases'
 findProject(':usecases').projectDir = file('./domain/usecases')
 
+include ':strategy'
+findProject(':strategy').projectDir = file('./domain/strategy')
+
 include ':mongo-repository'
 findProject(':mongo-repository').projectDir = file('./infrastructure/driven-adapters/mongo-repository')
 
