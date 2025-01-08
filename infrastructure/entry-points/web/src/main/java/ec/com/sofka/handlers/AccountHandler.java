@@ -1,12 +1,8 @@
 package ec.com.sofka.handlers;
 
-import ec.com.sofka.*;
-import ec.com.sofka.request.CreateAccountRequest;
+import ec.com.sofka.cases.account.*;
 import ec.com.sofka.data.RequestDTO;
 import ec.com.sofka.data.ResponseDTO;
-import ec.com.sofka.request.DeleteAccountRequest;
-import ec.com.sofka.request.GetAccountRequest;
-import ec.com.sofka.request.UpdateAccountRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
