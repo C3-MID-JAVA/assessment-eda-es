@@ -17,15 +17,17 @@ public class TransactionResponseDTO {
     private LocalDateTime date;
 
     private TransactionType transactionType;
+   // private String accountNumber;
 
-
-    public TransactionResponseDTO(String transactionId, String accountId, BigDecimal transactionCost, BigDecimal amount, LocalDateTime date, TransactionType transactionType) {
+    public TransactionResponseDTO(String transactionId, String accountId, BigDecimal transactionCost, BigDecimal amount, LocalDateTime date,
+                                  TransactionType transactionType) {
         this.transactionId = transactionId;
         this.accountId = accountId;
         this.transactionCost = transactionCost;
         this.amount = amount;
         this.date = date;
         this.transactionType = transactionType;
+
     }
 
     public TransactionResponseDTO(){

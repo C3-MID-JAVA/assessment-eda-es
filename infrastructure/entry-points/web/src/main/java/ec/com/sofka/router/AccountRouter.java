@@ -211,7 +211,6 @@ public class AccountRouter {
                 .andRoute(POST("/accounts/accountNumber").and(accept(MediaType.APPLICATION_JSON)), this::getAccountByAccountNumber)
                 .andRoute(GET("/accounts/getAll"), this::listAccounts)
                 .andRoute(POST("/accounts/accountId").and(accept(MediaType.APPLICATION_JSON)), this::getAccountById)
-                // .andRoute(GET("/accounts/{accountId}/balance"), this::getAccountBalance);
         ;
     }
 
@@ -236,46 +235,7 @@ public class AccountRouter {
                         .bodyValue(accountResponseDTO))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
-/*
-    public Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
-        String accountNumber = request.pathVariable("accountNumber");
 
-        // Construir el objeto AccountRequestDTO
-        AccountRequestDTO accountRequestDTO = new AccountRequestDTO(accountNumber);
-
-        return handler.getAccountByNumber(accountRequestDTO)
-                .flatMap(accountResponseDTO -> ServerResponse
-                        .ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(accountResponseDTO))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }
-*/
-/*
-    private Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
-        // Extraemos el body de la solicitud como un AccountRequestDTO
-        return request.bodyToMono(AccountReqByIdDTO.class)
-                .flatMap(dto -> validationService.validate(dto, AccountReqByIdDTO.class))
-                .flatMap(accountRequestDTO -> handler.getAccountByNumber(accountRequestDTO)
-                        .flatMap(response -> ServerResponse
-                                .ok()
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(response)))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex)); // Manejo de errores
-    }
-*//*
-    public Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
-        return request.bodyToMono(AccountReqByIdDTO.class)
-                .doOnError(ex -> System.out.println("Error deserializando el cuerpo de la solicitud: " + ex.getMessage()))
-
-                //.flatMap(dto -> validationService.validate(dto, AccountReqByIdDTO.class))
-                .flatMap(handler::getAccountByNumber)
-                .flatMap(accountResponseDTO -> ServerResponse
-                        .status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(accountResponseDTO))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }*/
 
     public Mono<ServerResponse> getAccountByAccountNumber(ServerRequest request) {
         return request.bodyToMono(AccountReqByIdDTO.class)
@@ -289,17 +249,6 @@ public class AccountRouter {
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
 
-/*
-    public Mono<ServerResponse> getAccountById(ServerRequest request) {
-        return request.bodyToMono(AccountReqByIdDTO.class)
-                .doOnError(ex -> System.out.println("Error deserializando el cuerpo de la solicitud: " + ex.getMessage()))
-                .flatMap(handler::getAccountById)
-                .flatMap(accountResponseDTO -> ServerResponse
-                        .status(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(accountResponseDTO))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }*/
 
     public Mono<ServerResponse> getAccountById(ServerRequest request) {
         return request.bodyToMono(AccountReqByIdDTO.class)
@@ -313,19 +262,6 @@ public class AccountRouter {
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
 
-/*
-
-    private Mono<ServerResponse> getAccountById(ServerRequest request) {
-        // Extraemos el body de la solicitud como un AccountRequestDTO
-        return request.bodyToMono(AccountReqByIdDTO.class)
-                //.flatMap(dto -> validationService.validate(dto, AccountReqByIdDTO.class))
-                .flatMap(accountRequestDTO -> handler.getAccountById(accountRequestDTO)
-                        .flatMap(response -> ServerResponse
-                                .ok()
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(response)))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex)); // Manejo de errores
-    }*/
 
     public Mono<ServerResponse> listAccounts(ServerRequest request) {
         return handler.getAllAccounts()
@@ -337,17 +273,5 @@ public class AccountRouter {
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
     }
 
-
-
-/*
-    private Mono<ServerResponse> getAccountBalance(ServerRequest request) {
-        String accountId = request.pathVariable("accountId");
-        return handler.getCheckBalance(accountId)
-                .flatMap(balance -> ServerResponse
-                        .ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(balance))
-                .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }*/
 
 }

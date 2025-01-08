@@ -154,14 +154,14 @@ public class TransactionRouter {
     })
     public RouterFunction<ServerResponse> transactionRoutes() {
         return RouterFunctions
-                //.route(POST("/transactions/deposit").and(accept(MediaType.APPLICATION_JSON)), this::createDeposit)
-                //.andRoute(POST("/transactions/withdrawal").and(accept(MediaType.APPLICATION_JSON)), this::createWithDrawal)
-                .route(POST("/transactions/transactionId").and(accept(MediaType.APPLICATION_JSON)), this::getTransactionById)
+                .route(POST("/transactions/deposit").and(accept(MediaType.APPLICATION_JSON)), this::createDeposit)
+                .andRoute(POST("/transactions/withdrawal").and(accept(MediaType.APPLICATION_JSON)), this::createWithDrawal)
+                .andRoute(POST("/transactions/transactionId").and(accept(MediaType.APPLICATION_JSON)), this::getTransactionById)
                 .andRoute(GET("/transactions"), this::getAllTransactions);
     }
 
 
-/*
+
     public Mono<ServerResponse> createWithDrawal(ServerRequest request) {
         return request.bodyToMono(TransactionRequestDTO.class)
                 .flatMap(dto -> validationService.validate(dto, TransactionRequestDTO.class))
@@ -182,7 +182,7 @@ public class TransactionRouter {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(transactionResponseDTO))
                 .onErrorResume(ex -> globalErrorHandler.handleException(request.exchange(), ex));
-    }*/
+    }
 
 
     public Mono<ServerResponse> getTransactionById(ServerRequest request) {

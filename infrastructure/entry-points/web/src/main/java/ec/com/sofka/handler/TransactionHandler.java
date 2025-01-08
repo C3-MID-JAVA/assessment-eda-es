@@ -43,27 +43,29 @@ public class TransactionHandler {
         this.getTransactionsUseCase = getTransactionsUseCase;
         this.getTransactionByIdUseCase = getTransactionByIdUseCase;
     }
-/*
+
     public Mono<TransactionResponseDTO> createDeposit(TransactionRequestDTO transactionRequestDTO) {
-        return createDepositUseCase.apply(transactionMapper.transactionRequestToTransaction(transactionRequestDTO))
+        return createDepositUseCase.execute(transactionMapper.toCreateTransactionRequest(transactionRequestDTO))
                 .flatMap(transaction -> {
-                    return getAccountByIdUseCase.execute(transaction.getAccountId())
+                    GetByElementRequest request = new GetByElementRequest(transaction.getCustomerId(), transaction.getAccountId());
+                    return getAccountByIdUseCase.execute(request)
                             .map(account -> {
-                                return transactionMapper.transactionToTransactionResponse(transaction, account.getBalance(), transactionRequestDTO.getAccountNumber());
+                                return transactionMapper.toTransactionResponseDTO(transaction);
                             });
                 });
     }
 
     public Mono<TransactionResponseDTO> createWithDrawal(TransactionRequestDTO transactionRequestDTO) {
-        return createWithDrawalUseCase.apply(transactionMapper.transactionRequestToTransaction(transactionRequestDTO))
+        return createWithDrawalUseCase.execute(transactionMapper.toCreateTransactionRequest(transactionRequestDTO))
                 .flatMap(transaction -> {
-                    return getAccountByIdUseCase.apply(transaction.getAccountId())
+                    GetByElementRequest request = new GetByElementRequest(transaction.getCustomerId(), transaction.getAccountId());
+                    return getAccountByIdUseCase.execute(request)
                             .map(account -> {
-                                return transactionMapper.transactionToTransactionResponse(transaction, account.getBalance(), transactionRequestDTO.getAccountNumber());
+                                return transactionMapper.toTransactionResponseDTO(transaction);
                             });
                 });
     }
-*/
+
 
 
     public Mono<TransactionResponseDTO> getTransactionById(AccountReqByIdDTO req) {
@@ -83,7 +85,7 @@ public class TransactionHandler {
                 .flatMap(transaction ->
                         getAccountByIdUseCase.execute(new GetByElementRequest(transaction.getCustomerId(), transaction.getAccountId()))
                                 .map(accountResponse -> TransactionDTOMapper.toTransactionResponseDTO(transaction))
-                                .switchIfEmpty(Mono.just(TransactionDTOMapper.toTransactionResponseDTOWithDefaults(transaction)))
+                                .switchIfEmpty(Mono.just(TransactionDTOMapper.toTransactionResponseDTO(transaction)))
                 );
     }
 
