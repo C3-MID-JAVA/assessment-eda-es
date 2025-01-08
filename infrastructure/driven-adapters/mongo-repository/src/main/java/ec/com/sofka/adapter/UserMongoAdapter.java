@@ -30,4 +30,9 @@ public class UserMongoAdapter implements UserRepository {
     public Flux<UserDTO> getAll() {
         return repository.findAll().map(UserMapperEntity::fromEntity);
     }
+
+    @Override
+    public Mono<UserDTO> findByDocumentId(String documentId) {
+        return repository.findByDocumentId(documentId).map(UserMapperEntity::fromEntity);
+    }
 }

@@ -34,8 +34,8 @@ public class Operation extends AggregateRoot<OperationId> {
         this.transaction = transaction;
     }
 
-    public void createTransaction(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, LocalDateTime timestamp, TransactionType type, String accuontId) {
-        addEvent(new TransactionCreated(new TransactionId().getValue(), amount, fee, netAmount, type, timestamp, accuontId)).apply();
+    public void createTransaction(BigDecimal amount, BigDecimal fee, BigDecimal finalAmount, LocalDateTime timestamp, TransactionType type, String accuontId) {
+        addEvent(new TransactionCreated(new TransactionId().getValue(), amount, fee, finalAmount, type, timestamp, accuontId)).apply();
     }
 
     public static Mono<Operation> from(final String id, Flux<DomainEvent> events) {

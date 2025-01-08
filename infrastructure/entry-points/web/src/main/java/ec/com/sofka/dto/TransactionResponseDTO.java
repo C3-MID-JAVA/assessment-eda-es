@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 public class TransactionResponseDTO {
     private String operationId;
     private BigDecimal fee;
-    private BigDecimal netAmount;
+    private BigDecimal finalAmount;
     private TransactionType type;
     private LocalDateTime timestamp;
     private String customerId;
 
-    public TransactionResponseDTO(String operationId, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String customerId) {
+    public TransactionResponseDTO(String operationId, BigDecimal fee, BigDecimal finalAmount, TransactionType type, LocalDateTime timestamp, String customerId) {
         this.operationId = operationId;
         this.fee = fee;
-        this.netAmount = netAmount;
+        this.finalAmount = finalAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.customerId = customerId;
@@ -39,12 +39,12 @@ public class TransactionResponseDTO {
         this.fee = fee;
     }
 
-    public BigDecimal getNetAmount() {
-        return netAmount;
+    public BigDecimal getFinalAmount() {
+        return finalAmount;
     }
 
-    public void setNetAmount(BigDecimal netAmount) {
-        this.netAmount = netAmount;
+    public void setFinalAmount(BigDecimal finalAmount) {
+        this.finalAmount = finalAmount;
     }
 
     public TransactionType getType() {

@@ -9,7 +9,7 @@ public class TransactionMapperEntity {
                 transactionDTO.getId(),
                 transactionDTO.getAmount(),
                 transactionDTO.getFee(),
-                transactionDTO.getNetAmount(),
+                transactionDTO.getFinalAmount(),
                 transactionDTO.getType(),
                 transactionDTO.getTimestamp(),
                 transactionDTO.getAccountId()
@@ -21,7 +21,7 @@ public class TransactionMapperEntity {
                 transaction.getId(),
                 transaction.getAmount(),
                 transaction.getFee(),
-                transaction.getNetAmount(),
+                transaction.getFinalAmount(),
                 transaction.getType(),
                 transaction.getTimestamp(),
                 transaction.getAccountId()

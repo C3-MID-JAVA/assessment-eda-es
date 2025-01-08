@@ -10,17 +10,17 @@ public class TransactionCreated extends DomainEvent {
     private String id;
     private BigDecimal amount;
     private BigDecimal fee;
-    private BigDecimal netAmount;
+    private BigDecimal finalAmount;
     private TransactionType type;
     private LocalDateTime timestamp;
     private String accountId;
 
-    public TransactionCreated(String id, BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
+    public TransactionCreated(String id, BigDecimal amount, BigDecimal fee, BigDecimal finalAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
         super(EventsTransactionEnum.TRANSACTION_CREATED.name());
         this.id = id;
         this.amount = amount;
         this.fee = fee;
-        this.netAmount = netAmount;
+        this.finalAmount = finalAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
@@ -42,8 +42,8 @@ public class TransactionCreated extends DomainEvent {
         return fee;
     }
 
-    public BigDecimal getNetAmount() {
-        return netAmount;
+    public BigDecimal getFinalAmount() {
+        return finalAmount;
     }
 
     public TransactionType getType() {

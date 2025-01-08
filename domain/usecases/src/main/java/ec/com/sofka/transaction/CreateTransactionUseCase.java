@@ -57,7 +57,7 @@ public class CreateTransactionUseCase implements IUseCaseExecute<CreateTransacti
 
                             TransactionStrategy strategy = strategyFactory.getStrategy(cmd.getType());
                             BigDecimal fee = strategy.calculateFee();
-                            BigDecimal netAmount = cmd.getAmount().add(fee);
+                            BigDecimal finalAmount = cmd.getAmount().subtract(fee);
                             BigDecimal balance = strategy.calculateBalance(accountDTO.getBalance(), cmd.getAmount());
 
                             if (balance.compareTo(BigDecimal.ZERO) < 0) {
@@ -67,7 +67,7 @@ public class CreateTransactionUseCase implements IUseCaseExecute<CreateTransacti
                             operation.createTransaction(
                                     cmd.getAmount(),
                                     fee,
-                                    netAmount,
+                                    finalAmount,
                                     LocalDateTime.now(),
                                     cmd.getType(),
                                     accountDTO.getId()

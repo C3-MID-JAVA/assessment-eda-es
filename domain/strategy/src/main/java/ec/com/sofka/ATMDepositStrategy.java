@@ -13,7 +13,7 @@ public class ATMDepositStrategy implements TransactionStrategy {
 
     @Override
     public BigDecimal calculateBalance(BigDecimal balance, BigDecimal amount) {
-        BigDecimal netAmount = amount.subtract(calculateFee());
-        return balance.add(netAmount);
+        BigDecimal finalAmount = amount.subtract(calculateFee());
+        return balance.add(finalAmount);
     }
 }

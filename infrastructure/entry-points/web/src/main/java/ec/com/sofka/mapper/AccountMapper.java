@@ -15,6 +15,6 @@ public class AccountMapper {
     }
 
     public static CreateAccountRequest toEntity(AccountRequestDTO accountRequestDTO) {
-        return new CreateAccountRequest(accountRequestDTO.getUserId());
+        return new CreateAccountRequest(accountRequestDTO.getAggregateId());
     }
 }

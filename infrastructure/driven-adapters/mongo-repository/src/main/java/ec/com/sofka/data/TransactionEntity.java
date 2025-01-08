@@ -17,7 +17,7 @@ public class TransactionEntity {
 
     private BigDecimal fee;
 
-    private BigDecimal netAmount;
+    private BigDecimal finalAmount;
 
     private TransactionType type;
 
@@ -29,20 +29,20 @@ public class TransactionEntity {
     public TransactionEntity() {
     }
 
-    public TransactionEntity(BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
+    public TransactionEntity(BigDecimal amount, BigDecimal fee, BigDecimal finalAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
         this.amount = amount;
         this.fee = fee;
-        this.netAmount = netAmount;
+        this.finalAmount = finalAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
     }
 
-    public TransactionEntity(String id, BigDecimal amount, BigDecimal fee, BigDecimal netAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
+    public TransactionEntity(String id, BigDecimal amount, BigDecimal fee, BigDecimal finalAmount, TransactionType type, LocalDateTime timestamp, String accountId) {
         this.id = id;
         this.amount = amount;
         this.fee = fee;
-        this.netAmount = netAmount;
+        this.finalAmount = finalAmount;
         this.type = type;
         this.timestamp = timestamp;
         this.accountId = accountId;
@@ -72,12 +72,12 @@ public class TransactionEntity {
         this.fee = fee;
     }
 
-    public BigDecimal getNetAmount() {
-        return netAmount;
+    public BigDecimal getFinalAmount() {
+        return finalAmount;
     }
 
-    public void setNetAmount(BigDecimal netAmount) {
-        this.netAmount = netAmount;
+    public void setFinalAmount(BigDecimal finalAmount) {
+        this.finalAmount = finalAmount;
     }
 
     public LocalDateTime getTimestamp() {

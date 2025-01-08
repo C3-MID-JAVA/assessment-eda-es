@@ -10,7 +10,7 @@ public class TransactionMapper {
         return new TransactionResponseDTO(
                 transactionResponse.getOperationId(),
                 transactionResponse.getFee(),
-                transactionResponse.getNetAmount(),
+                transactionResponse.getFinalAmount(),
                 transactionResponse.getType(),
                 transactionResponse.getTimestamp(),
                 transactionResponse.getCustomerId()

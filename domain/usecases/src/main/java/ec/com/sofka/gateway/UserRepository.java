@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 public interface UserRepository {
     Mono<UserDTO> save(UserDTO user);
     Flux<UserDTO> getAll();
+    Mono<UserDTO> findByDocumentId(String documentId);
 }

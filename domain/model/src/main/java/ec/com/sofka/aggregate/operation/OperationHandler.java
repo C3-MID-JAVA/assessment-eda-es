@@ -15,7 +15,7 @@ public class OperationHandler extends DomainActionsContainer {
                     TransactionId.of(event.getId()),
                     Amount.of(event.getAmount()),
                     Fee.of(event.getFee()),
-                    FinalAmount.of(event.getNetAmount()),
+                    FinalAmount.of(event.getFinalAmount()),
                     Timestamp.of(event.getTimestamp()),
                     Type.of(event.getType()),
                     AccountId.of(event.getAccountId())
