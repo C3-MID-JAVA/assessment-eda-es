@@ -7,6 +7,7 @@ import ec.com.sofka.account.values.objects.Balance;
 import ec.com.sofka.account.values.objects.NumberAcc;
 import ec.com.sofka.account.values.objects.Owner;
 import ec.com.sofka.account.values.objects.Status;
+import ec.com.sofka.aggregate.Customer;
 import ec.com.sofka.appservice.accounts.UpdateAccountUseCase;
 import ec.com.sofka.appservice.data.request.CreateTransactionRequest;
 import ec.com.sofka.appservice.data.request.GetByElementRequest;
@@ -14,10 +15,12 @@ import ec.com.sofka.appservice.data.request.UpdateAccountRequest;
 import ec.com.sofka.appservice.data.response.AccountResponse;
 import ec.com.sofka.appservice.data.response.TransactionResponse;
 import ec.com.sofka.appservice.accounts.GetAccountByAccountNumberUseCase;
+import ec.com.sofka.appservice.gateway.IEventStore;
 import ec.com.sofka.appservice.gateway.ITransactionRepository;
 import ec.com.sofka.appservice.gateway.dto.TransactionDTO;
 import ec.com.sofka.enums.OperationType;
 import ec.com.sofka.generics.interfaces.IUseCase;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -31,18 +34,20 @@ public class ProcessTransactionUseCase {
     private final CalculateFinalBalanceUseCase calculateFinalBalanceUseCase;
     private final UpdateAccountUseCase updateAccountUseCase;
     private final ITransactionRepository transactionRepository;
+    private final IEventStore repository;
 
     private final Predicate<BigDecimal> isSaldoInsuficiente = saldo -> saldo.compareTo(BigDecimal.ZERO) < 0;
 
     public ProcessTransactionUseCase(GetAccountByAccountNumberUseCase getAccountByNumberUseCase,
                                      GetTransactionStrategyUseCase getTransactionStrategyUseCase,
                                      CalculateFinalBalanceUseCase calculateFinalBalanceUseCase,
-                                     UpdateAccountUseCase updateAccountUseCase, ITransactionRepository transactionRepository) {
+                                     UpdateAccountUseCase updateAccountUseCase, ITransactionRepository transactionRepository, IEventStore repository) {
         this.getAccountByNumberUseCase = getAccountByNumberUseCase;
         this.getTransactionStrategyUseCase = getTransactionStrategyUseCase;
         this.calculateFinalBalanceUseCase = calculateFinalBalanceUseCase;
         this.updateAccountUseCase = updateAccountUseCase;
         this.transactionRepository = transactionRepository;
+        this.repository = repository;
     }
 
     public Mono<TransactionResponse> apply(CreateTransactionRequest cmd, OperationType operationType) {
@@ -52,6 +57,9 @@ public class ProcessTransactionUseCase {
                 .flatMap(accountResponse -> {
                     // Mapear AccountResponse a Account
                     Account account = mapToAccount(accountResponse);
+
+                    // Crear un cliente asociado a la transacción
+                    Customer customer = new Customer();
 
                     return getTransactionStrategyUseCase.apply(account, cmd.getTransactionType(), operationType, cmd.getAmount())
                             .flatMap(strategy -> {
@@ -79,7 +87,16 @@ public class ProcessTransactionUseCase {
 
                                 return updateAccountUseCase.execute(updateAccountRequest)
                                         .flatMap(updatedAccountResponse -> {
-                                            // Crear TransactionDTO
+                                            // Crear y guardar el evento de transacción
+                                            customer.createTransaction(
+                                                    cmd.getAmount(),
+                                                    strategy.getAmount(),
+                                                    LocalDateTime.now(),
+                                                    cmd.getTransactionType(),
+                                                    cmd.getAccountId()
+                                            );
+
+                                            // Guardar la transacción en el repositorio
                                             TransactionDTO transactionDTO = new TransactionDTO(
                                                     cmd.getAggregateId(),
                                                     cmd.getAmount(),
@@ -89,11 +106,17 @@ public class ProcessTransactionUseCase {
                                                     cmd.getAccountId()
                                             );
 
-                                            // Guardar la transacción
                                             return transactionRepository.save(transactionDTO)
                                                     .flatMap(savedTransaction -> {
-                                                        // Crear TransactionResponse
-                                                        TransactionResponse transactionResponse = new TransactionResponse(
+                                                        // Guardar los eventos no confirmados
+                                                        return Flux.fromIterable(customer.getUncommittedEvents())
+                                                                .flatMap(repository::save)
+                                                                .then(Mono.just(savedTransaction));
+                                                    })
+                                                    .map(savedTransaction -> {
+                                                        customer.markEventsAsCommitted();
+                                                        // Crear y devolver la respuesta de transacción
+                                                        return new TransactionResponse(
                                                                 cmd.getAggregateId(),
                                                                 savedTransaction.getTransactionId(),
                                                                 savedTransaction.getAccountId(),
@@ -102,12 +125,12 @@ public class ProcessTransactionUseCase {
                                                                 savedTransaction.getDate(),
                                                                 savedTransaction.getType()
                                                         );
-                                                        return Mono.just(transactionResponse);
                                                     });
                                         });
                             });
                 });
     }
+
 
 
 
