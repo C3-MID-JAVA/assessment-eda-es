@@ -5,15 +5,39 @@ import ec.com.sofka.generics.domain.DomainEvent;
 import java.math.BigDecimal;
 
 public class AccountCreated extends DomainEvent {
-    private final String accountNumber;
-    private final BigDecimal accountBalance;
-    private final String name;
+    private String accountId;
+    private  String accountNumber;
+    private  BigDecimal accountBalance;
+    private  String name;
+    private  String userId;
+    private String status;
 
-    public AccountCreated(String accountNumber, BigDecimal accountBalance, String name) {
+    public AccountCreated(String accountId, String accountNumber, BigDecimal accountBalance, String name, String userId, String status) {
+        super(EventsEnum.ACCOUNT_CREATED.name());
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.accountBalance = accountBalance;
+        this.name = name;
+        this.userId = userId;
+        this.status = status;
+    }
+
+    public AccountCreated(String accountNumber, BigDecimal accountBalance, String name, String userId,  String status) {
         super(EventsEnum.ACCOUNT_CREATED.name());
         this.accountNumber = accountNumber;
         this.accountBalance = accountBalance;
         this.name = name;
+        this.userId = userId;
+        this.status = status;
+
+    }
+
+    public AccountCreated() {
+        super(EventsEnum.ACCOUNT_CREATED.name());
+    }
+
+    public String getAccountId() {
+        return accountId;
     }
 
     public String getAccountNumber() {
@@ -28,5 +52,10 @@ public class AccountCreated extends DomainEvent {
         return name;
     }
 
-
+    public String getUserId() {
+        return userId;
+    }
+    public String getStatus() {
+        return status;
+    }
 }

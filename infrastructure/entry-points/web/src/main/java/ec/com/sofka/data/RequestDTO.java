@@ -8,15 +8,21 @@ public class RequestDTO {
     public String customer;
     //NumAcc
     public String account;
+
     public BigDecimal balance;
 
-    public RequestDTO(String customerId, String customer, String account, BigDecimal balance) {
+    public String idUser;
+
+    public String status;
+
+    public RequestDTO(String customerId, String customer, String account, BigDecimal balance, String idUser, String status) {
         this.customerId = customerId;
         this.customer = customer;
         this.account = account;
         this.balance = balance;
+        this.idUser = idUser;
+        this.status = status;
     }
-
 
     public String getCustomer() {
         return customer;
@@ -26,7 +32,6 @@ public class RequestDTO {
         return account;
     }
 
-
     public BigDecimal getBalance() {
         return balance;
     }
@@ -35,5 +40,12 @@ public class RequestDTO {
         return customerId;
     }
 
+    public String getIdUser() {
+        return idUser;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 
 }

@@ -26,7 +26,7 @@ public class JSONMap implements IJSONMapper {
             throw new RuntimeException("Failed to serialize event", e);
         }
     }
-
+/*
     @Override
     public DomainEvent readFromJson(String json, Class<?> clazz) {
         try {
@@ -34,5 +34,14 @@ public class JSONMap implements IJSONMapper {
         } catch (JsonProcessingException | ClassCastException e) {
             throw new RuntimeException("Failed to deserialize event", e);
         }
+    }*/
+
+@Override
+public Object readFromJson(String json, Class<?> clazz) {
+    try {
+        return mapper.readValue(json, clazz);
+    } catch (JsonProcessingException | ClassCastException e) {
+        throw new RuntimeException("Failed to deserialize event", e);
     }
+}
 }

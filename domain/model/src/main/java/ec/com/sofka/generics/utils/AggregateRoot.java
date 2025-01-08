@@ -14,19 +14,19 @@ public abstract class AggregateRoot<I extends Identity> extends Entity<I> {
     protected AggregateRoot(final I id) {
         super(id);
     }
-
+//Obtener los eventos
     public List<DomainEvent> getUncommittedEvents() {
         return List.copyOf(actionsHandler.getEvents());
     }
-
+//Obtiene los eventos y los marca como commit y los elimina
     public void markEventsAsCommitted() {
         actionsHandler.getEvents().clear();
     }
-
+// Subscribe los eventos al contenedor
     protected void setSubscription(final DomainActionsContainer container) {
         actionsHandler.subscribe(container);
     }
-
+//Agregar los eventos al listado de DomainEvents.
     protected IApplyEvent addEvent(final DomainEvent event) {
         final String aggregateName = this.getId()
                 .getClass()

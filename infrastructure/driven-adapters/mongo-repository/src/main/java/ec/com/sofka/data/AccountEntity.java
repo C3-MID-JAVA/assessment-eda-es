@@ -6,32 +6,61 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
-@Document(collection = "bank_account")
+@Document(collection = "account")
 public class AccountEntity {
     @Id
     private String id;
 
-    @Field("account_number")
+    @Field("account_id")
+    private String accountId;
+
+    @Field("accountNumber")
     private String accountNumber;
 
-    @Field("account_holder")
+    @Field("owner")
     private String owner;
 
-    @Field("global_balance")
+    @Field("balance")
     private BigDecimal balance;
 
+    @Field("status_account")
+    private String status;
 
-    public AccountEntity(BigDecimal balance, String owner, String accountNumber) {
+    private String idUser;
+
+    public AccountEntity(){
+    }
+
+    public AccountEntity(String id,String accountId,BigDecimal balance, String owner, String accountNumber, String idUser, String status) {
+        this.id = id;
+        this.accountId = accountId;
         this.balance = balance;
         this.owner = owner;
         this.accountNumber = accountNumber;
+        this.idUser=idUser;
+        this.status = status;
+    }
+
+    public AccountEntity(String accountId,BigDecimal balance, String owner, String accountNumber, String idUser, String status) {
+        this.accountId = accountId;
+        this.balance = balance;
+        this.owner = owner;
+        this.accountNumber = accountNumber;
+        this.idUser=idUser;
+        this.status = status;
     }
 
     public String getId() {
         return id;
     }
 
+    public String getAccountId() {
+        return accountId;
+    }
 
+    public String getIdUser() {
+        return idUser;
+    }
 
     public String getAccountNumber() {
         return accountNumber;
@@ -47,5 +76,8 @@ public class AccountEntity {
         return balance;
     }
 
+    public String getStatus() {
+        return status;
+    }
 }
 

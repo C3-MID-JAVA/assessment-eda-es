@@ -1,7 +1,8 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    //implementation 'org.springframework.boot:spring-boot-starter'
+    //implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'  /// Liibreria nueva
     implementation project (':usecases')
     implementation project (':mongo-repository')
     implementation project (':web')
