@@ -9,7 +9,7 @@ public class UserRequestDTO {
     @Size(min = 3, max = 50)
     private String name;
 
-    @NotBlank(message = "Document ID cannot be blank")
+    @NotBlank(message = "Document cannot be blank")
     @Size(min = 3, max = 15)
     private String documentId;
 
@@ -36,4 +36,5 @@ public class UserRequestDTO {
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
+
 }

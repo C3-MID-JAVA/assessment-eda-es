@@ -13,13 +13,14 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
 public class EventMongoAdapter implements IEventStore {
 
     private final IEventMongoRepository repository;
-    private final IJSONMapper mapper;
+    private final JSONMap mapper;
     private final ReactiveMongoTemplate eventMongoTemplate;
 
     public EventMongoAdapter(IEventMongoRepository repository, JSONMap mapper, @Qualifier("eventMongoTemplate") ReactiveMongoTemplate eventMongoTemplate) {
@@ -34,9 +35,10 @@ public class EventMongoAdapter implements IEventStore {
                 event.getEventId(),
                 event.getAggregateRootId(),
                 event.getEventType(),
-                mapper.writeToJson(event),
+                EventEntity.wrapEvent(event, mapper),
                 event.getWhen().toString(),
-                event.getVersion()
+                event.getVersion(),
+                event.getAggregateRootName()
         );
         return repository.save(e)
                 .thenReturn(event);
@@ -44,8 +46,17 @@ public class EventMongoAdapter implements IEventStore {
 
     @Override
     public Flux<DomainEvent> findAggregate(String aggregateId) {
-        return repository.findByAggregateId(aggregateId)
-                .map(eventEntity -> mapper.readFromJson(eventEntity.getEventData(), DomainEvent.class));
+        return repository.findAllByAggregateId(aggregateId)
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper))
+                .sort(Comparator.comparing(DomainEvent::getVersion)
+                        .thenComparing(DomainEvent::getWhen));
     }
 
+    @Override
+    public Flux<DomainEvent> findAllAggregate(String aggregate) {
+        return repository.findAllByAggregateRootName(aggregate)
+                .map(eventEntity -> eventEntity.deserializeEvent(mapper))
+                .sort(Comparator.comparing(DomainEvent::getVersion)
+                        .thenComparing(DomainEvent::getWhen));
+    }
 }

@@ -1,22 +1,22 @@
 package ec.com.sofka.dto;
 
 public class UserResponseDTO {
-    private String id;
+    private String customerId;
     private String name;
     private String documentId;
 
-    public UserResponseDTO(String id, String name, String documentId) {
-        this.id = id;
+    public UserResponseDTO(String customerId, String name, String documentId) {
+        this.customerId = customerId;
         this.name = name;
         this.documentId = documentId;
     }
 
-    public String getId() {
-        return id;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCustomerId(String customerId) {
+        this.customerId = UserResponseDTO.this.customerId;
     }
 
     public String getName() {

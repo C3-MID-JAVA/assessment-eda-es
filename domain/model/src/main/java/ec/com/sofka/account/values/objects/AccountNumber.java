@@ -27,7 +27,7 @@ public class AccountNumber implements IValueObject<String> {
             throw new IllegalArgumentException("The number can't be empty");
         }
 
-        if (value.length() < 10) {
+        if (value.length() < 8) {
             throw new IllegalArgumentException("The number must be at least 8 characters long");
         }
 

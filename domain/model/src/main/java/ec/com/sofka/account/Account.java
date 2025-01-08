@@ -30,4 +30,6 @@ public class Account extends Entity<AccountId> {
     public UserId getUserId() {
         return userId;
     }
+
+
 }

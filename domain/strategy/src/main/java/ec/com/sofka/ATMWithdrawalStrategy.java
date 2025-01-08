@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Component
+@Component("aTMWithdrawalStrategy")
 public class ATMWithdrawalStrategy implements TransactionStrategy {
     @Override
     public BigDecimal calculateFee() {

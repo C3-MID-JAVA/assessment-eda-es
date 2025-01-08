@@ -59,5 +59,4 @@ public class TransactionRequestDTO {
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
-
 }

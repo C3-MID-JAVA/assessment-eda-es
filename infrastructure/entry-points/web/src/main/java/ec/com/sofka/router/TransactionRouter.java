@@ -2,9 +2,11 @@ package ec.com.sofka.router;
 
 import ec.com.sofka.dto.TransactionRequestDTO;
 import ec.com.sofka.dto.TransactionResponseDTO;
-import ec.com.sofka.exception.ApiError;
+import ec.com.sofka.exception.ApiErrorResponse;
 import ec.com.sofka.handler.TransactionHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -12,8 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -21,6 +23,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 
+@Configuration
 public class TransactionRouter {
 
     private final TransactionHandler transactionHandler;
@@ -55,28 +58,24 @@ public class TransactionRouter {
                                     @ApiResponse(
                                             responseCode = "400",
                                             description = "Bad request, invalid transaction data (e.g., invalid amount, missing account number)",
-                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
                                     ),
                                     @ApiResponse(
                                             responseCode = "404",
                                             description = "Account not found, the provided account number does not exist",
-                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
                                     ),
                                     @ApiResponse(
                                             responseCode = "404",
                                             description = "Insufficient balance for this transaction",
-                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
                                     )
                             }
                     )
-            )
+            ),
     })
-
-
     public RouterFunction<ServerResponse> transactionRoutes() {
         return RouterFunctions
                 .route(RequestPredicates.POST("/transactions").and(accept(MediaType.APPLICATION_JSON)), transactionHandler::create);
     }
-
-
 }

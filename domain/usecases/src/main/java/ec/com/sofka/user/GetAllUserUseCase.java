@@ -1,44 +1,43 @@
 package ec.com.sofka.user;
 
-import ec.com.sofka.aggregate.Customer;
+import ec.com.sofka.aggregate.customer.Customer;
 import ec.com.sofka.gateway.IEventStore;
-import ec.com.sofka.gateway.UserRepository;
-import ec.com.sofka.generics.interfaces.IUseCase;
-import ec.com.sofka.user.request.EmptyRequest;
+import ec.com.sofka.generics.domain.DomainEvent;
+import ec.com.sofka.generics.interfaces.IUseEmptyCase;
 import ec.com.sofka.user.responses.UserResponse;
 import reactor.core.publisher.Flux;
 
-public class GetAllUserUseCase implements IUseCase<EmptyRequest, UserResponse> {
-    private final IEventStore repository;
-    private final UserRepository userRepository;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-    public GetAllUserUseCase(IEventStore repository, UserRepository userRepository) {
+public class GetAllUserUseCase implements IUseEmptyCase<UserResponse> {
+    /*    private final UserRepository userRepository;*/
+    private final IEventStore repository;
+
+    public GetAllUserUseCase(/*UserRepository userRepository,*/ IEventStore repository) {
+        /*        this.userRepository = userRepository;*/
         this.repository = repository;
-        this.userRepository = userRepository;
     }
 
     @Override
-    public Flux<UserResponse> execute(EmptyRequest request) {
-        return userRepository.getAll()
-                .flatMap(userDTO -> repository.findAggregate(userDTO.getCustomerId())
-                        .collectList() // Recopila los eventos como una lista
-                        .flatMapMany(events -> {
-                            // Crea el agregado Customer usando la lista de eventos
-                            Customer customer = Customer.from(userDTO.getCustomerId(), events);
+    public Flux<UserResponse> execute() {
+        return repository.findAllAggregate("customer")
+                .collectList()
+                .flatMapMany(events -> {
+                    Map<String, DomainEvent> latestEvents = events.stream()
+                            .collect(Collectors.toMap(
+                                    DomainEvent::getAggregateRootId,
+                                    event -> event,
+                                    (existing, replacement) -> existing.getVersion() >= replacement.getVersion() ? existing : replacement
+                            ));
 
-                            // Lógica del agregado
-                            customer.retrieveUser(userDTO.getName(), userDTO.getDocumentId());
-
-                            // Procesa los eventos no comprometidos
-                            return Flux.fromIterable(customer.getUncommittedEvents())
-                                    .flatMap(repository::save)
-                                    .doOnTerminate(customer::markEventsAsCommitted)
-                                    .thenMany(Flux.just(new UserResponse(
-                                            customer.getId().getValue(),
-                                            userDTO.getName(),
-                                            userDTO.getDocumentId()
-                                    )));
-                        })
+                    return Flux.fromIterable(latestEvents.values())
+                            .flatMap(event -> Customer.from(event.getAggregateRootId(), Flux.fromIterable(events)));
+                })
+                .map(customer -> new UserResponse(
+                        customer.getId().getValue(),
+                        customer.getUser().getName().getValue(),
+                        customer.getUser().getDocumentId().getValue())
                 );
     }
 }

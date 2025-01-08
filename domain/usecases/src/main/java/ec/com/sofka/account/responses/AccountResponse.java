@@ -2,7 +2,6 @@ package ec.com.sofka.account.responses;
 
 import java.math.BigDecimal;
 
-//Response class associated to the CreateAccountUseCase
 public class AccountResponse {
     private final String customerId;
     private final String accountNumber;

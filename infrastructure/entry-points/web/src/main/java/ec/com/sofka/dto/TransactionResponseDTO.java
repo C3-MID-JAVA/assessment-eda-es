@@ -1,9 +1,11 @@
 package ec.com.sofka.dto;
 
+
 import ec.com.sofka.transaction.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 public class TransactionResponseDTO {
     private String operationId;

@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class TransactionDTO {
-
     private String id;
     private BigDecimal amount;
     private BigDecimal fee;
@@ -61,6 +60,4 @@ public class TransactionDTO {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-
-
 }

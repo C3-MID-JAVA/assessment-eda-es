@@ -3,19 +3,25 @@ package ec.com.sofka.handler;
 import ec.com.sofka.dto.TransactionRequestDTO;
 import ec.com.sofka.mapper.TransactionMapper;
 import ec.com.sofka.transaction.CreateTransactionUseCase;
+import ec.com.sofka.transaction.GetAllByAccountNumberUseCase;
+import ec.com.sofka.transaction.request.GetAllByAccountNumberRequest;
 import ec.com.sofka.validator.RequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+@Component
 public class TransactionHandler {
 
     private final RequestValidator requestValidator;
     private final CreateTransactionUseCase createTransactionUseCase;
 
-    public TransactionHandler(RequestValidator requestValidator, CreateTransactionUseCase createTransactionUseCase) {
+    public TransactionHandler(
+            RequestValidator requestValidator,
+            CreateTransactionUseCase createTransactionUseCase) {
         this.requestValidator = requestValidator;
         this.createTransactionUseCase = createTransactionUseCase;
     }

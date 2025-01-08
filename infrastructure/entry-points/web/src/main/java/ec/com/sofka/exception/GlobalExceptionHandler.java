@@ -49,12 +49,12 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
         HttpStatus status = statusResolver.apply(ex);
         String errorMessage = ex.getMessage();
 
-        ErrorResponse errorResponse = new ErrorResponse(status, errorMessage);
+        ApiErrorResponse errorResponse = new ApiErrorResponse(status, errorMessage);
 
         response.setStatusCode(status);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        Function<ErrorResponse, DataBuffer> errorResponseSerializer = errorResp -> {
+        Function<ApiErrorResponse, DataBuffer> errorResponseSerializer = errorResp -> {
             try {
                 byte[] bytes = objectWriter.writeValueAsBytes(errorResp);
                 return response.bufferFactory().wrap(bytes);

@@ -1,6 +1,9 @@
 package ec.com.sofka.transaction;
 
+import ec.com.sofka.TransactionStrategy;
 import ec.com.sofka.TransactionStrategyFactory;
+import ec.com.sofka.aggregate.customer.Customer;
+import ec.com.sofka.aggregate.operation.TransactionAgregate;
 import ec.com.sofka.exception.BadRequestException;
 import ec.com.sofka.exception.NotFoundException;
 import ec.com.sofka.gateway.AccountRepository;
@@ -10,23 +13,20 @@ import ec.com.sofka.gateway.dto.TransactionDTO;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;
 import ec.com.sofka.transaction.request.CreateTransactionRequest;
+import ec.com.sofka.transaction.responses.TransactionResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class CreateTransactionUseCase implements IUseCase<CreateTransactionRequest, TransactionResponse>  {
+public class CreateTransactionUseCase implements IUseCase<CreateTransactionRequest, TransactionResponse> {
     private final IEventStore repository;
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final TransactionStrategyFactory strategyFactory;
 
-    public CreateTransactionUseCase(IEventStore repository,
-                                    AccountRepository accountRepository,
-                                    TransactionRepository transactionRepository,
-                                    TransactionStrategyFactory strategyFactory)
-    {
+    public CreateTransactionUseCase(IEventStore repository, AccountRepository accountRepository, TransactionRepository transactionRepository, TransactionStrategyFactory strategyFactory) {
         this.repository = repository;
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
@@ -47,7 +47,7 @@ public class CreateTransactionUseCase implements IUseCase<CreateTransactionReque
                         .flatMap(account -> accountRepository.findByAccountNumber(account.getAccountNumber().getValue())
                                 .switchIfEmpty(Mono.error(new NotFoundException("Account not found")))
                                 .flatMap(accountDTO -> {
-                                    Operation operation = new Operation();
+                                    TransactionAgregate transactionAgregate = new TransactionAgregate();
 
                                     TransactionStrategy strategy = strategyFactory.getStrategy(cmd.getType());
                                     BigDecimal fee = strategy.calculateFee();
@@ -58,7 +58,7 @@ public class CreateTransactionUseCase implements IUseCase<CreateTransactionReque
                                         throw new BadRequestException("Insufficient balance for this transaction.");
                                     }
 
-                                    operation.createTransaction(
+                                    transactionAgregate.createTransaction(
                                             cmd.getAmount(),
                                             fee,
                                             netAmount,
@@ -68,13 +68,13 @@ public class CreateTransactionUseCase implements IUseCase<CreateTransactionReque
                                     );
 
                                     return transactionRepository.save(new TransactionDTO(
-                                                    operation.getTransaction().getId().getValue(),
-                                                    operation.getTransaction().getAmount().getValue(),
-                                                    operation.getTransaction().getFee().getValue(),
-                                                    operation.getTransaction().getNetAmount().getValue(),
-                                                    operation.getTransaction().getType().getValue(),
-                                                    operation.getTransaction().getTimestamp().getValue(),
-                                                    operation.getTransaction().getAccountId().getValue()
+                                                    transactionAgregate.getTransaction().getId().getValue(),
+                                                    transactionAgregate.getTransaction().getAmount().getValue(),
+                                                    transactionAgregate.getTransaction().getFee().getValue(),
+                                                    transactionAgregate.getTransaction().getNetAmount().getValue(),
+                                                    transactionAgregate.getTransaction().getType().getValue(),
+                                                    transactionAgregate.getTransaction().getTimestamp().getValue(),
+                                                    transactionAgregate.getTransaction().getAccountId().getValue()
                                             ))
                                             .flatMap(transactionDTO -> {
                                                 accountDTO.setBalance(balance);
@@ -88,24 +88,24 @@ public class CreateTransactionUseCase implements IUseCase<CreateTransactionReque
                                                             );
 
                                                             return Flux.concat(
-                                                                            Flux.fromIterable(operation.getUncommittedEvents())
+                                                                            Flux.fromIterable(transactionAgregate.getUncommittedEvents())
                                                                                     .flatMap(repository::save),
                                                                             Flux.fromIterable(customer.getUncommittedEvents())
                                                                                     .flatMap(repository::save)
                                                                     )
                                                                     .doOnTerminate(() -> {
-                                                                        operation.markEventsAsCommitted();
+                                                                        transactionAgregate.markEventsAsCommitted();
                                                                         customer.markEventsAsCommitted();
                                                                     })
                                                                     .then()
                                                                     .thenReturn(new TransactionResponse(
-                                                                            operation.getId().getValue(),
-                                                                            operation.getTransaction().getAmount().getValue(),
-                                                                            operation.getTransaction().getFee().getValue(),
-                                                                            operation.getTransaction().getNetAmount().getValue(),
-                                                                            operation.getTransaction().getType().getValue(),
-                                                                            operation.getTransaction().getTimestamp().getValue(),
-                                                                            operation.getTransaction().getAccountId().getValue(),
+                                                                            transactionAgregate.getId().getValue(),
+                                                                            transactionAgregate.getTransaction().getAmount().getValue(),
+                                                                            transactionAgregate.getTransaction().getFee().getValue(),
+                                                                            transactionAgregate.getTransaction().getNetAmount().getValue(),
+                                                                            transactionAgregate.getTransaction().getType().getValue(),
+                                                                            transactionAgregate.getTransaction().getTimestamp().getValue(),
+                                                                            transactionAgregate.getTransaction().getAccountId().getValue(),
                                                                             customer.getId().getValue()
                                                                     ));
                                                         });

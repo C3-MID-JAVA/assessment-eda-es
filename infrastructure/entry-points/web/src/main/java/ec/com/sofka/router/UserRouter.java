@@ -2,7 +2,7 @@ package ec.com.sofka.router;
 
 import ec.com.sofka.dto.UserRequestDTO;
 import ec.com.sofka.dto.UserResponseDTO;
-import ec.com.sofka.exception.ErrorResponse;
+import ec.com.sofka.exception.ApiErrorResponse;
 import ec.com.sofka.handler.UserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -58,37 +58,21 @@ public class UserRouter {
                                     @ApiResponse(
                                             responseCode = "400",
                                             description = "Bad request, validation error or missing required fields",
-                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
                                     ),
                                     @ApiResponse(
                                             responseCode = "400",
                                             description = "Bad request, user already exist",
-                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
                                     )
                             }
                     )
             ),
-            @RouterOperation(
-                    path = "/users",
-                    method = RequestMethod.GET,
-                    operation = @Operation(
-                            tags = {"Users"},
-                            operationId = "getAllUsers",
-                            summary = "Get all users",
-                            description = "This endpoint retrieves all users",
-                            responses = {
-                                    @ApiResponse(
-                                            responseCode = "200",
-                                            description = "Successfully retrieved users",
-                                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))
-                                    )
-                            }
-                    )
-            )
     })
+
     public RouterFunction<ServerResponse> userRoutes() {
         return RouterFunctions
-                .route(RequestPredicates.POST("/users").and(accept(MediaType.APPLICATION_JSON)), userHandler::create)
-                .andRoute(RequestPredicates.GET("/users"), userHandler::getAll);
+                .route(RequestPredicates.POST("/users").and(accept(MediaType.APPLICATION_JSON)), userHandler::create);
     }
+
 }

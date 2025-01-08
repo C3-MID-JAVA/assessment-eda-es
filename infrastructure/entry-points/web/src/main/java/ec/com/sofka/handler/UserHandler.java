@@ -4,7 +4,6 @@ import ec.com.sofka.dto.UserRequestDTO;
 import ec.com.sofka.mapper.UserMapper;
 import ec.com.sofka.user.CreateUserUseCase;
 import ec.com.sofka.user.GetAllUserUseCase;
-import ec.com.sofka.user.request.EmptyRequest;
 import ec.com.sofka.validator.RequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,25 +16,16 @@ import reactor.core.publisher.Mono;
 public class UserHandler {
 
     private final RequestValidator requestValidator;
-    private final GetAllUserUseCase getAllUseCase;
     private final CreateUserUseCase createUserUseCase;
 
-    public UserHandler(RequestValidator requestValidator, GetAllUserUseCase getAllUseCase, CreateUserUseCase createUserUseCase) {
+    public UserHandler(
+            RequestValidator requestValidator,
+            CreateUserUseCase createUserUseCase
+    ) {
         this.requestValidator = requestValidator;
-        this.getAllUseCase = getAllUseCase;
         this.createUserUseCase = createUserUseCase;
     }
 
-    public Mono<ServerResponse> getAll(ServerRequest request) {
-        return getAllUseCase.execute(EmptyRequest.INSTANCE)
-                .map(UserMapper::fromEntity)
-                .collectList()
-                .flatMap(userResponseDTOs ->
-                        ServerResponse
-                                .ok()
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(userResponseDTOs));
-    }
 
     public Mono<ServerResponse> create(ServerRequest request) {
         return request.bodyToMono(UserRequestDTO.class)
