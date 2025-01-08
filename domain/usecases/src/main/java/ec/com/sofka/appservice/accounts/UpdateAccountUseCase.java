@@ -43,8 +43,8 @@ public class UpdateAccountUseCase implements IUseCase<UpdateAccountRequest, Upda
                             customer.getAccount().getId().getValue(),
                             request.getCustomerName(),
                             request.getNumber(),
-                            customer.getAccount().getBalance().getValue(),
-                            customer.getAccount().getStatus().getValue()
+                            request.getBalance(),
+                            request.getStatus()
                     );
 
                     // Actualizar la cuenta en el repositorio de manera reactiva
