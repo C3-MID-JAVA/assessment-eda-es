@@ -10,6 +10,7 @@ import ec.com.sofka.enums.TransactionType;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.utils.AggregateRoot;
 import ec.com.sofka.transaction.Transaction;
+import ec.com.sofka.transaction.values.TransactionId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -59,8 +60,8 @@ public class Customer extends AggregateRoot<CustomerId> {
 
     }
 
-    public void createTransaction(String transactionId, BigDecimal amount, BigDecimal transactionCost, LocalDateTime date, TransactionType type, String accountId) {
-        addEvent(new TransactionCreated(transactionId,amount,transactionCost,date,type,accountId)).apply();
+    public void createTransaction(BigDecimal amount, BigDecimal transactionCost, LocalDateTime date, TransactionType type, String accountId) {
+        addEvent(new TransactionCreated(new TransactionId().getValue(),amount,transactionCost,date,type,accountId)).apply();
     }
 
     //Remember that User as Aggregate is the open door to interact with the entities

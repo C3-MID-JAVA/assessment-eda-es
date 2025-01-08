@@ -22,6 +22,17 @@ public class AccountUpdated extends DomainEvent {
 
     }
 
+    public AccountUpdated(BigDecimal balance, String accountNumber, String owner, String status) {
+        super(EventsEnum.ACCOUNT_UPDATED.name());
+        this.balance = balance;
+        this.accountNumber = accountNumber;
+        this.owner = owner;
+        this.status = status;
+
+    }
+
+
+
     public AccountUpdated() {
         super(EventsEnum.ACCOUNT_UPDATED.name());
 

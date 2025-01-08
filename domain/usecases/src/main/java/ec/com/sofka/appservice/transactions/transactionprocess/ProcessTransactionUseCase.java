@@ -7,6 +7,8 @@ import ec.com.sofka.account.values.objects.Balance;
 import ec.com.sofka.account.values.objects.NumberAcc;
 import ec.com.sofka.account.values.objects.Owner;
 import ec.com.sofka.account.values.objects.Status;
+import ec.com.sofka.aggregate.Customer;
+import ec.com.sofka.aggregate.events.TransactionCreated;
 import ec.com.sofka.appservice.accounts.UpdateAccountUseCase;
 import ec.com.sofka.appservice.data.request.CreateTransactionRequest;
 import ec.com.sofka.appservice.data.request.GetByElementRequest;
@@ -14,10 +16,13 @@ import ec.com.sofka.appservice.data.request.UpdateAccountRequest;
 import ec.com.sofka.appservice.data.response.AccountResponse;
 import ec.com.sofka.appservice.data.response.TransactionResponse;
 import ec.com.sofka.appservice.accounts.GetAccountByAccountNumberUseCase;
+import ec.com.sofka.appservice.gateway.dto.AccountDTO;
 import ec.com.sofka.enums.OperationType;
+import ec.com.sofka.enums.TransactionType;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.function.Predicate;
 
 public class ProcessTransactionUseCase {
@@ -86,8 +91,8 @@ public class ProcessTransactionUseCase {
     }
 */
 
-    public Mono<TransactionResponse> apply(CreateTransactionRequest transaction, OperationType operationType) {
-        GetByElementRequest accountNumberRequest = new GetByElementRequest(transaction.getAggregateId(), transaction.getAccountNumber());
+    public Mono<TransactionResponse> apply(CreateTransactionRequest cmd, OperationType operationType) {
+        GetByElementRequest accountNumberRequest = new GetByElementRequest(cmd.getAggregateId(), cmd.getAccountNumber());
 
         return getAccountByNumberUseCase.execute(accountNumberRequest)
                 .switchIfEmpty(Mono.error(new ConflictException("Account not found")))
@@ -95,12 +100,12 @@ public class ProcessTransactionUseCase {
                     // Mapeo de AccountResponse a Account
                     Account account = mapToAccount(accountResponse);
 
-                    return getTransactionStrategyUseCase.apply(account, transaction.getTransactionType(), operationType, transaction.getAmount())
+                    return getTransactionStrategyUseCase.apply(account, cmd.getTransactionType(), operationType, cmd.getAmount())
                             .flatMap(strategy -> {
                                 // Calcular el balance final después de la transacción
                                 BigDecimal finalBalance = calculateFinalBalanceUseCase.apply(
                                         account.getBalance().getValue(),
-                                        transaction.getAmount(),
+                                        cmd.getAmount(),
                                         strategy.getAmount(),
                                         operationType
                                 );
@@ -110,37 +115,37 @@ public class ProcessTransactionUseCase {
                                     return Mono.error(new ConflictException("Insufficient balance for transaction."));
                                 }
 
-                                // Actualizar el balance de la cuenta
-                                account.setBalance(Balance.of(finalBalance));
-
-                                // Crear solicitud para actualizar la cuenta
-                                UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest(
-                                        transaction.getAggregateId(),
+                                // Crear un AccountDTO con los datos actualizados
+                                AccountDTO accountDTO = new AccountDTO(
                                         account.getId().getValue(),
-                                        finalBalance,
-                                        account.getAccountNumber().getValue(),
                                         account.getOwner().getValue(),
+                                        account.getAccountNumber().getValue(),
+                                        finalBalance,
                                         account.getStatus().getValue()
+                                );
+
+                                UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest(
+                                        cmd.getAggregateId(),
+                                        accountDTO.getBalance(),
+                                        accountDTO.getAccountNumber(),
+                                        accountDTO.getName(),
+                                        accountDTO.getStatus()
                                 );
 
                                 // Actualizar la cuenta con el nuevo balance
                                 return updateAccountUseCase.execute(updateAccountRequest)
                                         .flatMap(updatedAccountResponse -> {
-                                            // Establecer la información de la transacción
-                                            transaction.setAccountId(updatedAccountResponse.getAccountId());
-                                            transaction.setTransactionCost(strategy.getAmount());
-
-                                            // Guardar la transacción
-                                            return saveTransactionUseCase.apply(transaction)
+                                            // Crear y guardar la transacción usando el balance actualizado
+                                            return saveTransactionUseCase.execute(cmd)
                                                     .flatMap(savedTransaction -> {
                                                         // Crear la respuesta de la transacción
                                                         TransactionResponse transactionResponse = new TransactionResponse(
-                                                                savedTransaction.getId(),
-                                                                savedTransaction.getAmount(),
+                                                                savedTransaction.getTransactionId(),
+                                                                savedTransaction.getAccountId(),
                                                                 savedTransaction.getTransactionCost(),
-                                                                savedTransaction.getDate().getValue(),
-                                                                savedTransaction.getType(),
-                                                                savedTransaction.getAccountId()
+                                                                savedTransaction.getAmount(),
+                                                                savedTransaction.getTransactionDate(),
+                                                                savedTransaction.getTransactionType()
                                                         );
                                                         return Mono.just(transactionResponse);
                                                     });
@@ -148,6 +153,7 @@ public class ProcessTransactionUseCase {
                             });
                 });
     }
+
 
 
 
@@ -160,16 +166,4 @@ public class ProcessTransactionUseCase {
 
         return new Account(accountId, balance, numberAcc, owner, status);
     }
-    /*
-    private Account mapToAccount(AccountResponse accountResponse) {
-        // Aquí mapeas el DTO AccountResponse a la entidad Account
-        Balance balance = Balance.of(accountResponse.getBalance());
-        // Suponiendo que tienes las demás propiedades necesarias para crear el objeto Account
-        AccountId accountId = AccountId.of(accountResponse.getAccountId());
-        NumberAcc numberAcc = NumberAcc.of(accountResponse.getAccountNumber());
-        Owner owner = Owner.of(accountResponse.getCustomerId()); // Suponiendo que Owner se crea con el customerId
-        Status status = Status.of(accountResponse.getStatus()); // Suponiendo que Status se crea con el status
-
-        return new Account(accountId, balance, numberAcc, owner, status);
-    }*/
 }
