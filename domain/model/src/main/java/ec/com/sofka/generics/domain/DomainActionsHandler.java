@@ -35,7 +35,7 @@ public class DomainActionsHandler {
     }
 
     private void handle(final DomainEvent event, final Consumer<? super DomainEvent> action) {
-        try { //To avoid a casting issue
+        try {
             action.accept(event);
             long version = increaseVersion(event);
             event.setVersion(version);

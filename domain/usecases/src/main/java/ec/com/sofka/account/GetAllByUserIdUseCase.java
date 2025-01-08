@@ -3,7 +3,6 @@ package ec.com.sofka.account;
 import ec.com.sofka.account.request.GetAllByUserIdRequest;
 import ec.com.sofka.account.responses.AccountResponse;
 import ec.com.sofka.aggregate.customer.Customer;
-import ec.com.sofka.gateway.AccountRepository;
 import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.generics.domain.DomainEvent;
 import ec.com.sofka.generics.interfaces.IUseCase;

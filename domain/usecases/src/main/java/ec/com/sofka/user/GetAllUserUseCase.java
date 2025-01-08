@@ -11,11 +11,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GetAllUserUseCase implements IUseEmptyCase<UserResponse> {
-    /*    private final UserRepository userRepository;*/
     private final IEventStore repository;
 
-    public GetAllUserUseCase(/*UserRepository userRepository,*/ IEventStore repository) {
-        /*        this.userRepository = userRepository;*/
+    public GetAllUserUseCase(IEventStore repository) {
         this.repository = repository;
     }
 

@@ -1,6 +1,7 @@
 package ec.com.sofka.user;
 
 import ec.com.sofka.aggregate.customer.Customer;
+import ec.com.sofka.exception.ConflictException;
 import ec.com.sofka.gateway.IEventStore;
 import ec.com.sofka.gateway.UserRepository;
 import ec.com.sofka.gateway.dto.UserDTO;
@@ -21,25 +22,30 @@ public class CreateUserUseCase implements IUseCase<CreateUserRequest, UserRespon
 
     @Override
     public Mono<UserResponse> execute(CreateUserRequest cmd) {
-        Customer customer = new Customer();
+        return userRepository.findByDocumentId(cmd.getDocumentId())
+                .flatMap(existingUser -> Mono.error(new ConflictException("User with document ID already exists")))
+                .then(Mono.defer(() -> {
 
-        customer.createUser(cmd.getName(), cmd.getDocumentId());
+                    Customer customer = new Customer();
 
-        return userRepository.save(new UserDTO(
-                        customer.getUser().getId().getValue(),
-                        customer.getUser().getName().getValue(),
-                        customer.getUser().getDocumentId().getValue()
-                ))
-                .flatMap(savedUser -> {
-                    return Flux.fromIterable(customer.getUncommittedEvents())
-                            .flatMap(repository::save)
-                            .then(Mono.just(savedUser));
-                })
-                .doOnTerminate(customer::markEventsAsCommitted)
-                .thenReturn(new UserResponse(
-                        customer.getId().getValue(),
-                        customer.getUser().getName().getValue(),
-                        customer.getUser().getDocumentId().getValue()
-                ));
+                    customer.createUser(cmd.getName(), cmd.getDocumentId());
+
+                    return userRepository.save(new UserDTO(
+                                    customer.getUser().getId().getValue(),
+                                    customer.getUser().getName().getValue(),
+                                    customer.getUser().getDocumentId().getValue()
+                            ))
+                            .flatMap(savedUser -> {
+                                return Flux.fromIterable(customer.getUncommittedEvents())
+                                        .flatMap(repository::save)
+                                        .then(Mono.just(savedUser));
+                            })
+                            .doOnTerminate(customer::markEventsAsCommitted)
+                            .thenReturn(new UserResponse(
+                                    customer.getId().getValue(),
+                                    customer.getUser().getName().getValue(),
+                                    customer.getUser().getDocumentId().getValue()
+                            ));
+                }));
     }
 }
