@@ -45,14 +45,17 @@ public class TransactionDTOMapper {
     public static CreateTransactionRequest toCreateTransactionRequest(TransactionRequestDTO transactionRequestDTO) {
         // Generar la fecha de la transacción (por ejemplo, la fecha actual)
         LocalDateTime transactionDate = LocalDateTime.now();
-
+        System.out.println("aggeregate"+transactionRequestDTO.getAggregateId());
         return new CreateTransactionRequest(
+                transactionRequestDTO.getAggregateId(),
                 null,           // Este valor se debe calcular o proporcionar
                 transactionRequestDTO.getAmount(),  // El monto de la transacción
                 null,           // La fecha de la transacción
                 transactionRequestDTO.getTransactionType(), // El tipo de transacción
                 transactionRequestDTO.getAccountNumber()                  // ID de la cuenta asociado (proporcionado como parámetro)
         );
+
+
     }
 
 

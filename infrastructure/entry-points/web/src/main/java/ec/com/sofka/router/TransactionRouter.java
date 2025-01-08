@@ -49,12 +49,12 @@ public class TransactionRouter {
     @Bean
     @RouterOperations({
             @RouterOperation(
-                    path = "/transactions/transactionId",
+                    path = "/transactions/accountNumber",
                     operation = @Operation(
                             tags = {"Transactions"},
-                            operationId = "createDeposit",
-                            summary = "Create a deposit transaction",
-                            description = "Creates a new deposit transaction for a user.",
+                            operationId = "getTransaction",
+                            summary = "Get deposits transaction",
+                            description = "Get deposit transaction for an account number.",
                             requestBody = @RequestBody(
                                     description = "Deposit transaction details",
                                     required = true,
@@ -156,7 +156,7 @@ public class TransactionRouter {
         return RouterFunctions
                 .route(POST("/transactions/deposit").and(accept(MediaType.APPLICATION_JSON)), this::createDeposit)
                 .andRoute(POST("/transactions/withdrawal").and(accept(MediaType.APPLICATION_JSON)), this::createWithDrawal)
-                .andRoute(POST("/transactions/transactionId").and(accept(MediaType.APPLICATION_JSON)), this::getTransactionById)
+                .andRoute(POST("/transactions/accountNumber").and(accept(MediaType.APPLICATION_JSON)), this::getTransactionByAccountNumber)
                 .andRoute(GET("/transactions"), this::getAllTransactions);
     }
 
@@ -185,11 +185,11 @@ public class TransactionRouter {
     }
 
 
-    public Mono<ServerResponse> getTransactionById(ServerRequest request) {
+    public Mono<ServerResponse> getTransactionByAccountNumber(ServerRequest request) {
         return request.bodyToMono(AccountReqByIdDTO.class)
                 .doOnNext(dto -> {
                 })
-                .flatMap(handler::getTransactionById)
+                .flatMap(handler::getTransactionByAccountNumber)
                 .flatMap(accountResponseDTO -> ServerResponse
                         .status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)

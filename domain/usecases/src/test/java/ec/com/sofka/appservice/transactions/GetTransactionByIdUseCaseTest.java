@@ -20,12 +20,12 @@ public class GetTransactionByIdUseCaseTest {
     @Mock
     private ITransactionRepository repository;
 
-    private GetTransactionByIdUseCase useCase;
+    private GetTransactionByAccNumberUseCase useCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        useCase = new GetTransactionByIdUseCase(repository);
+        useCase = new GetTransactionByAccNumberUseCase(repository);
     }
 
     @Test

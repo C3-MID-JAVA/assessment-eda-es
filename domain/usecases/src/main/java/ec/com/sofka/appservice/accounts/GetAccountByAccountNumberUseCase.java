@@ -1,5 +1,6 @@
 package ec.com.sofka.appservice.accounts;
 
+import ec.com.sofka.ConflictException;
 import ec.com.sofka.aggregate.Customer;
 import ec.com.sofka.appservice.data.response.AccountResponse;
 import ec.com.sofka.appservice.data.request.GetByElementRequest;
@@ -24,11 +25,15 @@ public class GetAccountByAccountNumberUseCase implements IUseCase <GetByElementR
         return eventRepository.findAggregate(request.getAggregateId())
                 .collectList() // Convierte el flujo de eventos en una lista
                 .flatMap(events -> {
+                    if (events.isEmpty()) {
+                        return Mono.error(new ConflictException("No events found for the given aggregate ID."));
+                    }
                     // Reconstruir el agregado usando los eventos
                     Customer customer = Customer.from(request.getAggregateId(), events);
 
                     // Obtener la cuenta del repositorio de forma reactiva
                     return repository.findByAccountNumber(customer.getAccount().getAccountNumber().getValue())
+                            .switchIfEmpty(Mono.error(new ConflictException("Account not found.")))
                             .map(accountDTO -> new AccountResponse(
                                     request.getAggregateId(),
                                     accountDTO.getAccountId(),
@@ -39,25 +44,5 @@ public class GetAccountByAccountNumberUseCase implements IUseCase <GetByElementR
                             ));
                 });
     }
-/*
-
-    @Override
-    public Mono<GetAccountResponse> execute(GetAccountRequest request) {
-
-        return eventRepository.findAggregate(request.getAggregateId())
-                .collectList()
-                .map(eventsList -> Customer.from(request.getAggregateId(), eventsList))
-                .flatMap(accountAggregate ->
-                        repository.findByAccountNumber(accountAggregate.getAccount().getAccountNumber().getValue())
-                                .map(result -> new GetAccountResponse(
-                                        request.getAggregateId(),
-                                        result.getId(),
-                                        result.getAccountNumber(),
-                                        result.getName(),
-                                        result.getBalance(),
-                                        result.getStatus()
-                                ))
-                );
-    }*/
 
 }

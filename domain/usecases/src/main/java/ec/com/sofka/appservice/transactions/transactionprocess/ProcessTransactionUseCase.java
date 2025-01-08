@@ -47,7 +47,7 @@ public class ProcessTransactionUseCase {
 
     public Mono<TransactionResponse> apply(CreateTransactionRequest cmd, OperationType operationType) {
         GetByElementRequest accountNumberRequest = new GetByElementRequest(cmd.getAggregateId(), cmd.getAccountNumber());
-
+        System.out.println("agregate caso de uso "+ accountNumberRequest.getAggregateId());
         return getAccountByNumberUseCase.execute(accountNumberRequest)
                 .switchIfEmpty(Mono.error(new ConflictException("Account not found")))
                 .flatMap(accountResponse -> {

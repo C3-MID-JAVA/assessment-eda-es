@@ -1,23 +1,18 @@
 package ec.com.sofka.handler;
 
-import ec.com.sofka.appservice.accounts.GetAccountByAccountNumberUseCase;
 import ec.com.sofka.appservice.accounts.GetAccountByIdUseCase;
 import ec.com.sofka.appservice.data.request.GetByElementRequest;
 import ec.com.sofka.appservice.transactions.CreateDepositUseCase;
 import ec.com.sofka.appservice.transactions.CreateWithDrawalUseCase;
-import ec.com.sofka.appservice.transactions.GetTransactionByIdUseCase;
+import ec.com.sofka.appservice.transactions.GetTransactionByAccNumberUseCase;
 import ec.com.sofka.appservice.transactions.GetTransactionsUseCase;
 import ec.com.sofka.data.AccountReqByIdDTO;
 import ec.com.sofka.data.TransactionRequestDTO;
 import ec.com.sofka.data.TransactionResponseDTO;
-import ec.com.sofka.enums.TransactionType;
 import ec.com.sofka.mapper.TransactionDTOMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 
 @Component
@@ -26,7 +21,7 @@ public class TransactionHandler {
     private final CreateDepositUseCase createDepositUseCase;
     private final CreateWithDrawalUseCase createWithDrawalUseCase;
     private final GetTransactionsUseCase getTransactionsUseCase;
-    private final GetTransactionByIdUseCase getTransactionByIdUseCase;
+    private final GetTransactionByAccNumberUseCase getTransactionByIdUseCase;
     private final TransactionDTOMapper transactionMapper;
     private final GetAccountByIdUseCase getAccountByIdUseCase;
 
@@ -35,7 +30,7 @@ public class TransactionHandler {
                               TransactionDTOMapper transactionMapper,GetAccountByIdUseCase getAccountByIdUseCase,
                               CreateWithDrawalUseCase createWithDrawalUseCase,
                               GetTransactionsUseCase getTransactionsUseCase,
-                              GetTransactionByIdUseCase getTransactionByIdUseCase) {
+                              GetTransactionByAccNumberUseCase getTransactionByIdUseCase) {
         this.createDepositUseCase = createDepositUseCase;
         this.transactionMapper = transactionMapper;
         this.getAccountByIdUseCase = getAccountByIdUseCase;
@@ -47,7 +42,8 @@ public class TransactionHandler {
     public Mono<TransactionResponseDTO> createDeposit(TransactionRequestDTO transactionRequestDTO) {
         return createDepositUseCase.execute(transactionMapper.toCreateTransactionRequest(transactionRequestDTO))
                 .flatMap(transaction -> {
-                    GetByElementRequest request = new GetByElementRequest(transaction.getCustomerId(), transaction.getAccountId());
+                    System.out.println("custom transacion"+transaction.getCustomerId());
+                    GetByElementRequest request = new GetByElementRequest(transactionRequestDTO.getAggregateId(), transaction.getAccountId());
                     return getAccountByIdUseCase.execute(request)
                             .map(account -> {
                                 return transactionMapper.toTransactionResponseDTO(transaction);
@@ -68,7 +64,7 @@ public class TransactionHandler {
 
 
 
-    public Mono<TransactionResponseDTO> getTransactionById(AccountReqByIdDTO req) {
+    public Mono<TransactionResponseDTO> getTransactionByAccountNumber(AccountReqByIdDTO req) {
         GetByElementRequest request = new GetByElementRequest(req.getCustomerId(), req.getAccountNumber());
 
         return getTransactionByIdUseCase.execute(request)

@@ -5,17 +5,16 @@ import ec.com.sofka.appservice.data.request.GetByElementRequest;
 import ec.com.sofka.appservice.data.response.TransactionResponse;
 import ec.com.sofka.appservice.gateway.IEventStore;
 import ec.com.sofka.generics.interfaces.IUseCase;
-import ec.com.sofka.transaction.Transaction;
 import ec.com.sofka.appservice.gateway.ITransactionRepository;
 import reactor.core.publisher.Mono;
 
 import java.util.NoSuchElementException;
 
-public class GetTransactionByIdUseCase implements IUseCase<GetByElementRequest, TransactionResponse> {
+public class GetTransactionByAccNumberUseCase implements IUseCase<GetByElementRequest, TransactionResponse> {
 
     private final ITransactionRepository repository;
     private final IEventStore eventRepository;
-    public GetTransactionByIdUseCase(ITransactionRepository repository, IEventStore eventRepository) {
+    public GetTransactionByAccNumberUseCase(ITransactionRepository repository, IEventStore eventRepository) {
         this.repository = repository;
         this.eventRepository = eventRepository;
     }

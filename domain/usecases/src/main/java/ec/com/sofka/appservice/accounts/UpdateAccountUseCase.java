@@ -63,12 +63,12 @@ public class UpdateAccountUseCase implements IUseCase<UpdateAccountRequest, Upda
                                                     result.getAccountId(),
                                                     result.getAccountNumber(),
                                                     result.getName(),
-                                                    result.getStatus()
+                                                    result.getStatus(),
+                                                    result.getBalance()
                                             ));
                                         }));
                             });
-                })
-                .defaultIfEmpty(new UpdateAccountResponse()); // Manejar el caso donde no hay eventos
+                }); // Manejar el caso donde no hay eventos
     }
 
 

@@ -15,33 +15,18 @@ public class CreateTransactionRequest extends Request {
     private final String accountId;
     private final String accountNumber;
 
-    public CreateTransactionRequest(final BigDecimal transactionCost,
+    public CreateTransactionRequest(final String aggregateId,final BigDecimal transactionCost,
                                     final BigDecimal amount,
                                     final LocalDateTime transactionDate,
                                     final TransactionType transactionType,
                                     final String accountId) {
-        super(null);
+        super(aggregateId);
         this.transactionCost = transactionCost;
         this.amount = amount;
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;
         this.accountId = accountId;
         this.accountNumber = null;
-    }
-
-    public CreateTransactionRequest(final BigDecimal transactionCost,
-                                    final BigDecimal amount,
-                                    final LocalDateTime transactionDate,
-                                    final String accountNumber,
-                                    final TransactionType transactionType
-                                    ) {
-        super(null);
-        this.transactionCost = transactionCost;
-        this.amount = amount;
-        this.transactionDate = transactionDate;
-        this.transactionType = transactionType;
-        this.accountNumber = accountNumber;
-        this.accountId = null;
     }
 
     public BigDecimal getTransactionCost() {

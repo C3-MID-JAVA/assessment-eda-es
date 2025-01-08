@@ -1,5 +1,6 @@
 package ec.com.sofka.adapter;
 
+import ec.com.sofka.ConflictException;
 import ec.com.sofka.account.Account;
 import ec.com.sofka.appservice.gateway.IAccountRepository;
 import ec.com.sofka.appservice.gateway.dto.AccountDTO;
@@ -39,13 +40,11 @@ public class AccountAdapter implements IAccountRepository {
     @Override
     public Mono<AccountDTO> update(AccountDTO accountDTO) {
         AccountEntity accountEntity = AccountMapper.DtoToEntity(accountDTO);
-
-        return repository.findById(accountEntity.getAccountId()) // Devuelve Mono<AccountEntity>
+        return repository.findById(accountEntity.getId())
                 .flatMap(found -> {
                     // Actualizar los valores necesarios
                     AccountEntity updatedEntity = new AccountEntity(
                             found.getId(),
-                            found.getAccountId(),
                             accountDTO.getName(),
                             accountDTO.getAccountNumber(),
                             found.getBalance(), // Mantener el balance original
@@ -53,20 +52,18 @@ public class AccountAdapter implements IAccountRepository {
                     );
                     return repository.save(updatedEntity); // Devuelve Mono<AccountEntity>
                 })
-                .map(AccountMapper::entityToDTO) // Mapear a DTO
-                .defaultIfEmpty(null);
+                .map(AccountMapper::entityToDTO);
     }
 
     @Override
     public Mono<AccountDTO> delete(AccountDTO accountDTO) {
         AccountEntity accountEntity = AccountMapper.DtoToEntity(accountDTO);
 
-        return repository.findById(accountEntity.getAccountId()) // Devuelve Mono<AccountEntity>
+        return repository.findById(accountEntity.getId()) // Devuelve Mono<AccountEntity>
                 .flatMap(found -> {
                     // Actualizar el estado de la cuenta para indicar eliminación
                     AccountEntity deletedEntity = new AccountEntity(
                             found.getId(),
-                            found.getAccountId(),
                             found.getName(),
                             found.getAccountNumber(),
                             found.getBalance(),

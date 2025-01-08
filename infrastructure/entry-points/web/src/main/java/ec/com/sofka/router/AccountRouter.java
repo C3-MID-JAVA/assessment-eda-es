@@ -210,7 +210,7 @@ public class AccountRouter {
                 .andRoute(POST("/update").and(accept(MediaType.APPLICATION_JSON)), this::updateAccount)
                 .andRoute(POST("/accounts/accountNumber").and(accept(MediaType.APPLICATION_JSON)), this::getAccountByAccountNumber)
                 .andRoute(GET("/accounts/getAll"), this::listAccounts)
-                .andRoute(POST("/accounts/accountId").and(accept(MediaType.APPLICATION_JSON)), this::getAccountById)
+                //.andRoute(POST("/accounts/accountId").and(accept(MediaType.APPLICATION_JSON)), this::getAccountById)
         ;
     }
 

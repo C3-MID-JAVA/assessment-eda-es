@@ -21,12 +21,14 @@ public class UpdateAccountResponse {
         this.status = status;
     }
 
-    public UpdateAccountResponse(String customerId, String accountId, String accountNumber, String name, BigDecimal balance) {
+    public UpdateAccountResponse(String customerId, String accountId, String accountNumber, String name , String status, BigDecimal balance) {
         this.customerId = customerId;
         this.accountId = accountId;
         this.accountNumber = accountNumber;
         this.name = name;
         this.balance = balance;
+        this.status = status;
+
     }
 
     public UpdateAccountResponse(){
