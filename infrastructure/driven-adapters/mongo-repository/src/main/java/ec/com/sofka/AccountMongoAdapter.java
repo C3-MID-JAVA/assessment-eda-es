@@ -1,89 +1,70 @@
 package ec.com.sofka;
 
-import ec.com.sofka.account.Account;
 import ec.com.sofka.data.AccountEntity;
-import ec.com.sofka.database.account.IMongoRepository;
-import ec.com.sofka.gateway.AccountRepository;
+import ec.com.sofka.database.IMongoAccountRepository;
+import ec.com.sofka.gateway.IAccountRepository;
 import ec.com.sofka.gateway.dto.AccountDTO;
-import ec.com.sofka.mapper.AccountMapper;
+import ec.com.sofka.mapper.AccountEntityMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
-public class AccountMongoAdapter implements AccountRepository {
+public class AccountMongoAdapter implements IAccountRepository {
 
-    private final IMongoRepository repository;
-    private final MongoTemplate accountMongoTemplate;
+    private final IMongoAccountRepository repository;
+    private final ReactiveMongoTemplate accountMongoTemplate;
 
-    public AccountMongoAdapter(IMongoRepository repository, @Qualifier("accountMongoTemplate")  MongoTemplate accountMongoTemplate) {
+    public AccountMongoAdapter(IMongoAccountRepository repository, ReactiveMongoTemplate accountMongoTemplate) {
         this.repository = repository;
         this.accountMongoTemplate = accountMongoTemplate;
     }
 
     @Override
-    public List<AccountDTO> findAll() {
-        return repository.findAll().stream().map(AccountMapper::toDTO).toList();
+    public Flux<AccountDTO> findAll() {
+        return repository.findAll() // Llamada correcta al método findAll del repositorio.
+                .map(AccountEntityMapper::mapToDTO); // Mapear cada entidad a un DTO.
     }
 
     @Override
-    public AccountDTO findByAcccountId(String id) {
-        AccountEntity found = repository.findById(id).get();
-        return AccountMapper.toDTO(found);
+    public Mono<AccountDTO> findByAccountId(String id) {
+        return repository.findById(id)
+                .map(AccountEntityMapper::mapToDTO)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Account not found with ID: " + id)));
     }
 
     @Override
-    public AccountDTO findByNumber(String number) {
-        AccountEntity found = repository.findByAccountNumber(number);
-        return AccountMapper.toDTO(found);
+    public Mono<AccountDTO> findByNumber(String number) {
+        return repository.findByAccountNumber(number)
+                .map(AccountEntityMapper::mapToDTO)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Account not found with number: " + number)));
     }
 
     @Override
-    public AccountDTO save(AccountDTO account) {
-        AccountEntity a = AccountMapper.toEntity(account);
-        AccountEntity saved = repository.save(a);
-        return AccountMapper.toDTO(saved);
+    public Mono<AccountDTO> save(AccountDTO account) {
+        return Mono.just(account)
+                .map(AccountEntityMapper::mapToEntity)
+                .flatMap(repository::save)
+                .map(AccountEntityMapper::mapToDTO);
     }
 
     @Override
-    public AccountDTO update(AccountDTO account) {
-        AccountEntity a = AccountMapper.toEntity(account);
-
-        AccountEntity found = repository.findByAccountId(AccountMapper.toEntity(account).getAccountId());
-
-        return found != null ?
-                AccountMapper.toDTO(repository.save(
-                    new AccountEntity(
+    public Mono<AccountDTO> update(AccountDTO account) {
+        return repository.findById(account.getId())
+                .flatMap(found -> {
+                    AccountEntity updated = new AccountEntity(
                             found.getId(),
                             found.getAccountId(),
                             account.getName(),
                             account.getAccountNumber(),
                             found.getBalance(),
                             found.getStatus()
-                        )
-                    )) : null;
-
-
-    }
-
-    @Override
-    public AccountDTO delete(AccountDTO account) {
-        AccountEntity a = AccountMapper.toEntity(account);
-
-        AccountEntity found = repository.findByAccountId(AccountMapper.toEntity(account).getAccountId());
-
-        return found != null ?
-                AccountMapper.toDTO(repository.save(
-                        new AccountEntity(
-                                found.getId(),
-                                found.getAccountId(),
-                                found.getName(),
-                                found.getAccountNumber(),
-                                found.getBalance(),
-                                account.getStatus()
-                        )
-                )) : null;
+                    );
+                    return repository.save(updated);
+                })
+                .map(AccountEntityMapper::mapToDTO)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Account not found for update with ID: " + account.getId())));
     }
 }
