@@ -41,7 +41,6 @@ public class DomainActionsHandler {
             long version = increaseVersion(event);
             event.setVersion(version);
         }catch(Exception e){
-            System.out.println("errorrr: "+e.getMessage());
             new ConflictException("error: "+e.getMessage(),e);
         }
     }
