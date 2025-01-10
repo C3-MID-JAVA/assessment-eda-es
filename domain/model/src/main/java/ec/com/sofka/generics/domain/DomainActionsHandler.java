@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-//6. Generics creation to apply DDD: DomainActionsHandler
 public class DomainActionsHandler {
     private final List<DomainEvent> events = new LinkedList<>();
     private final Map<String, AtomicLong> versions = new ConcurrentHashMap<>();
@@ -29,13 +28,13 @@ public class DomainActionsHandler {
 
     private long increaseVersion(final DomainEvent event){
         final AtomicLong current = versions.get(event.getEventType());
-        final long newVersion = current != null ? current.incrementAndGet() : event.getVersion();
+        final long newVersion = current != null ? current.incrementAndGet():event.getVersion();
         versions.put(event.getEventType(), new AtomicLong(newVersion));
         return newVersion;
     }
 
     private void handle(final DomainEvent event, final Consumer<? super DomainEvent> action){
-        try{ //To avoid a casting issue
+        try{
             action.accept(event);
             long version = increaseVersion(event);
             event.setVersion(version);

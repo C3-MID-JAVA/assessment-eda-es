@@ -1,9 +1,7 @@
 package ec.com.sofka.generics.interfaces;
 
-import ec.com.sofka.generics.utils.Request;
+import org.reactivestreams.Publisher;
 
-import java.util.List;
-
-public interface IUseCaseGet <R> {
-    List<R> get();
+public interface IUseCaseGet<R> {
+    Publisher<R> get();
 }

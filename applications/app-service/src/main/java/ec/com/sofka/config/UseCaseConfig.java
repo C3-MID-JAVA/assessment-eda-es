@@ -11,5 +11,4 @@ includeFilters = {
 })
 public class UseCaseConfig {
 
-
 }
